@@ -67,9 +67,9 @@ If the validation succeeded, validate function will return 'true'. Otherwise it 
 |between:min,max|The field under validation must have a size between the given min and max.Strings and numerics are evaluated.|
 |boolean     |The field under validation must be able to be cast as a boolean. Accepted input are true, false, 1, 0, "1", "0", '1' and '-'.|
 |date        |The field under validation must be a valid date according to the Date.parse function.|
-|date_format:format|The field under validation must match the format defined according to the !!*!*!* Validator.utils.dateFormat function.|
+|date_format:format|The field under validation must match the format defined according to the Validator.utils.dateFormat function.|
 |different:field|The given field must be different than the field under validation.|
-|digits:value|The field under validation must be numeric and must have an exact length of value.\
+|digits:value|The field under validation must be numeric and must have an exact length of value.|
 |digits_between:min,max|The field under validation must have a length between the given min and max.|
 |email       |The field under validation must be formatted as an e-mail address.|
 |in:foo,bar,...|The field under validation must be included in the given list of values.|
@@ -90,4 +90,4 @@ If the validation succeeded, validate function will return 'true'. Otherwise it 
 |same        |The given field must match the field under validation.|
 |size:value  |The field under validation must have a size matching the given value. For string data, value corresponds to the number of characters. For numeric data, value corresponds to a given integer value.|
 |string      |The field under validation must be a string type.|
-|url         |The field under validation must be formatted as an URL. It does not support non-English urls!!!**.|
+|url         |The field under validation must be formatted as an URL. It does not support non-English urls.|

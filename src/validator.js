@@ -148,7 +148,7 @@
     },
 
     // The field under validation must be able to be cast as a boolean.
-    // Accepted input are true, false, 1, 0, "1", "0", '1' and '-'.
+    // Accepted input are true, false, 1, 0, "1", "0", '1' and '0'.
     'boolean': /^(true|false|1|0|"1"|"0"|'1'|'0')$/i,
 
     // The field under validation must be a valid date according to the Date.parse function.
@@ -157,7 +157,7 @@
     },
 
     // date_format:format
-    // The field under validation must match the format defined according to the utils.dateFormat function.
+    // The field under validation must match the format defined according to the Validator.utils.dateFormat function.
     'date_format': function (value, format) {
       var date = new Date(Date.parse(value)),
           dateString = this.utils.dateFormat(date, format);
@@ -310,7 +310,7 @@
     },
 
     // The field under validation must be formatted as an URL.
-    // It does not support non-English url.
+    // It does not support non-English urls.
     'url': /^((https|http|ftp|rtsp|mms)?:\/\/)?(([0-9a-z_!~*\'().&=+$%-]+: )?[0-9a-z_!~*\'().&=+$%-]+@)?(([0-9]{1,3}.){3}[0-9]{1,3}|([0-9a-z_!~*\'()-]+.)*([0-9a-z][0-9a-z-]{0,61})?[0-9a-z].[a-z]{2,6})(:[0-9]{1,4})?((\/?)|(\/[0-9a-z_!~*\'().;?:@&=+$,%#-]+)+\/?)$/,
 
   };
@@ -412,6 +412,6 @@
   };
 
   window['Validator'] = Validator;
-  
+
 })(window);
 
