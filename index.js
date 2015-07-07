@@ -1,8 +1,5 @@
-var Validator = function (o, r) {
+var Validator = function (o) {
   this.object = o;
-  this.rules = r;
-
-  // validate之前别忘了trim！！！
 };
 
 Validator.prototype.requires = {
@@ -285,6 +282,7 @@ Validator.prototype.validators = {
   // For numeric data, value corresponds to a given integer value.
   'size': function (value, size) {
     var res = false;
+    size = Number(size);
     switch(typeof value) {
       case 'string':
         res = size === value.length;
@@ -311,6 +309,31 @@ Validator.prototype.validators = {
 
 Validator.prototype.utils = {
 
+  // Trim string
+  trim: function (str) {
+    return str.replace(/(^\s*)|(\s*$)/g, '');
+  },
+
+  // Parse rule string to object.
+  parser: function (value) {
+    var fields = value.split('|'),
+        res = [];
+    for (var i = 0; i < fields.length; i++) {
+      var field = fields[i].split(':'),
+          key = field[0],
+          values = [];
+      if(field.length === 2)
+        values = field[1].split(',');
+
+      key = this.trim(key);
+      for (var j = 0; j < values.length; j++) {
+        values[j] = this.trim(values[j]);
+      }
+      res.push({key: key, value: values});
+    }
+    return res;
+  },
+
   inArray: function (array, value) {
     for (var i = 0; i < array.length; i++) {
       if(array[i] === value)
@@ -323,21 +346,83 @@ Validator.prototype.utils = {
   // Stringify date to defined formats.
   dateFormat: function (date, fmt) {
     var o = {
-        "M+": date.getMonth() + 1,
-        "d+": date.getDate(),
-        "h+": date.getHours(),
-        "m+": date.getMinutes(),
-        "s+": date.getSeconds(),
-        "q+": Math.floor((date.getMonth() + 3) / 3),
-        "S": date.getMilliseconds()
+      "M+": date.getMonth() + 1,
+      "d+": date.getDate(),
+      "h+": date.getHours(),
+      "m+": date.getMinutes(),
+      "s+": date.getSeconds(),
+      "q+": Math.floor((date.getMonth() + 3) / 3),
+      "S": date.getMilliseconds()
     };
     if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
     for (var k in o)
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
   },
+
 }
 
-var log = new Object();
-Validator(log, {name:'required'});
+// Validation failed at @field on @rule
+Validator.prototype.fail = function (field, rule) {
+  return {
+    status: 'failed',
+    field: field,
+    rule: rule,
+  };
+};
+
+Validator.prototype.validate = function(_rules) {
+  for(var field in _rules) {
+    var ruleString = _rules[field],
+        rules = this.utils.parser(ruleString);
+    for (var i = 0; i < rules.length; i++) {
+      var key = rules[i].key,
+          value = rules[i].value;
+      // Match require rules.
+      if(key in this.requires) {
+        value.unshift(field);
+        if(!this.requires[key].apply(this, value))
+          return this.fail(field, key);
+      } else if (field in this.object) {
+        // Match other rules.
+        if(key in this.validators) {
+          // Validator is a Function.
+          if(typeof this.validators[key] === 'function') {
+            value.unshift(this.object[field]);
+            if(!this.validators[key].apply(this, value))
+              return this.fail(field, key);
+          } else {
+            // Validator is an RegExp.
+            if(!this.validators[key].test(this.object[field]))
+              return this.fail(field, key);
+          }
+        }
+      }
+    }
+  }
+  return true;
+};
+
+/******************/
+/*      TEST      */
+/******************/
+
+var person = {
+      name: 'Peter',
+      phone: '12345678900',
+      email: 'peter@example.com',
+      age: 24,
+      gendar: 'male',
+      hobbies: ['coding', 'singing', 'movies'],
+    },
+    rules = {
+      name:'required|string',
+      phone: 'string|size:11',
+      email: 'required_without:phone|email',
+      gendar: 'in:male,female',
+      age: 'integer|between:0,120',
+      hobbies: 'array',
+    };
+
+console.log(new Validator(person).validate(rules));
 
