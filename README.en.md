@@ -28,7 +28,7 @@ console.log(new Validator(example).validate(rules));
 <script type="text/javascript" src="./validator.js"></script>
 ```
 
-### Init with a new Validator Object
+### Init with a new Validator object
 ```javascript
 var object_to_be_tested = {
   text: 'Hello world!',
@@ -54,7 +54,13 @@ val.validate(rules);
 If the validation succeeded, validate function will return 'true'. Otherwise it will return error message object containing validation status, the specific field and rule that made the validation failed.
 
 ## Available Validation Rules
-|rule       |description                      |
-|:----------|:--------------------------------|
-|accepted   |The field under validation must be yes, on, 1, or true.|
-|           |This is useful for validating "Terms of Service" acceptance.|
+|RULES       |DESCRIPTION                      |
+|:-----------|:--------------------------------|
+|accepted    |The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.|
+|after:date  |The field under validation must be a value after a given date.|
+|alpha       |The field under validation must be entirely alphabetic characters.|
+|alpha_dash  |The field under validation must be entirely alphabetic characters.|
+|alpha_num   |The field under validation must be entirely alpha-numeric characters.|
+|array       |The field under validation must be of type array.|
+|before:date |The field under validation must be a value preceding the given date.|
+|between:min,max|The field under validation must have a size between the given min and max.Strings and numerics are evaluated.|
