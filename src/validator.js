@@ -6,9 +6,7 @@
  ;(function(window){
   'use strict';
 
-  var Validator = function (o) {
-    this.object = o;
-  };
+  var Validator = function () {};
 
   Validator.prototype.requires = {
 
@@ -21,7 +19,7 @@
     // The field under validation must be present if the field is equal to any value.
     // The relationship between each field is AND.
     'required_if': function () {
-      if(arguments.length < 3 || arguments % 2 != 1)
+      if(arguments.length < 3 || arguments.length % 2 != 1)
         return false;
       var field = arguments[0];
       for (var i = 1; i < arguments.length; i = i + 2) {
@@ -30,7 +28,7 @@
         if(!this.object[_field] || this.object[_field] != _value)
           return true;
       }
-      return this.requires.required(field);
+      return this.requires.required.call(this, field);
     },
 
     // required_with:foo,bar,...
@@ -41,7 +39,7 @@
       var field = arguments[0];
       for (var i = 1; i < arguments.length; i++) {
         if(arguments[i] in this.object)
-          return this.requires.required(field);
+          return this.requires.required.call(this, field);
       }
       return true;
     },
@@ -56,7 +54,7 @@
         if(!(arguments[i] in this.object))
           return true;
       }
-      return this.requires.required(field);
+      return this.requires.required.call(this, field);
     },
 
     // required_without:foo,bar,...
@@ -67,7 +65,7 @@
       var field = arguments[0];
       for (var i = 1; i < arguments.length; i++) {
         if(!(arguments[i] in this.object))
-          return this.requires.required(field);
+          return this.requires.required.call(this, field);
       }
       return true;
     },
@@ -82,7 +80,7 @@
         if(arguments[i] in this.object)
           return true;
       }
-      return this.requires.required(field);
+      return this.requires.required.call(this, field);
     },
 
   };
@@ -370,7 +368,7 @@
 
   };
 
-  // Validation failed at @field on @rule
+  // Validation failed at @field on @rule.
   Validator.prototype.fail = function (field, rule) {
     return {
       status: 'failed',
@@ -379,7 +377,15 @@
     };
   };
 
-  Validator.prototype.validate = function(_rules) {
+  // Add a validator.
+  // @fn must be a Function or an RegExp object.
+  // if @fn is a Function, it must receive value as its first argument, and return true if validation succeeds.
+  Validator.prototype.add = function (name, fn) {
+    this.validators[name] = fn;
+  };
+
+  Validator.prototype.validate = function(object, _rules) {
+    this.object = object;
     for(var field in _rules) {
       var ruleString = _rules[field],
           rules = this.utils.parser(ruleString);

@@ -16,7 +16,7 @@ var example = {
       comments: 'integer',
     };
 
-console.log(new Validator(example).validate(rules));
+console.log(new Validator().validate(example, rules));
 // => Object {status: "failed", field: "comments", rule: "integer"}
 ```
 
@@ -29,12 +29,7 @@ console.log(new Validator(example).validate(rules));
 
 ### 初始化一个Validator对象
 ```javascript
-var object_to_be_tested = {
-  text: 'Hello world!',
-  date: '2015-07-07',
-  comments: null,
-};
-var validator = new Validator(object_to_be_tested);
+var validator = new Validator();
 ```
 
 ### 制定验证规则
@@ -49,9 +44,21 @@ var rules = {
 
 ### 验证
 ```javascript
-val.validate(rules);
+val.validate(object_to_be_tested, rules);
 ```
 如果待验证对象符合规则，validate函数返回true；否则返回带有验证状态、失败的属性和对应失败的规则信息的对象。
+
+### 添加验证器
+使用add方法为Validator添加验证器，第一个参数为验证器名称，第二个参数为验证方法，可以为正则表达式对象或者函数。当验证方法为函数时，其第一个参数必须为当前验证域的值，后面的参数根据需求而定，验证成功时结果返回true。
+```javascript
+val.add('older_than', function (value, age) {
+  return value > age;
+});
+
+var rules = {
+  age: 'integer|older_than:17',
+};
+```
 
 ## 可用的验证规则
 |验证规则     |规则含义                          |
