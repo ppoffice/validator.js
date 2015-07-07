@@ -1,5 +1,5 @@
 # js-validator
-Laravel风格的JavaScript对象验证库。
+Laravel风格的JavaScript对象验证库。| [English Version](README.en.md)
 [Laravel Validation](http://laravel.com/docs/5.0/validation)
 
 使用js-validator来验证对象或者JSON是否符合规则非常方便，而且具有很好的可扩展性。
