@@ -3,7 +3,19 @@
  * Released under the MIT License
  * https://github.com/ppoffice/js-validator
  */
- ;(function(window){
+
+var _window,
+	_define,
+	_require,
+	_exports,
+	_module;
+try { _window = window; } catch (e) { _window = null; }
+try { _define = define; } catch (e) { _define = null; }
+try { _require = require; } catch (e) { _require = null; }
+try { _exports = exports; } catch (e) { _exports = null; }
+try { _module = module; } catch (e) { _module = null; }
+
+;(function(window, define, require, exports, module){
   'use strict';
 
   var Validator = function () {};
@@ -417,7 +429,16 @@
     return true;
   };
 
-  window['Validator'] = Validator;
+  if(define && require && exports && module) {
+    define('Validator', function (require, exports, module) {
+      return Validator;
+    });
+  } else if (require && exports && module) {
+    module.exports = Validator;
+  } else if (window) {
+  	window['Validator'] = Validator;
+  }
 
-})(window);
+})(_window, _define, _require, _exports, _module);
+
 
