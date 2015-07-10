@@ -1,3 +1,5 @@
+![Views](https://sourcegraph.com/api/repos/github.com/ppoffice/js-validator/.counters/views.svg)
+
 # js-validator
 Laravel风格的JavaScript对象验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
 
