@@ -1,3 +1,5 @@
+![Views](https://sourcegraph.com/api/repos/github.com/ppoffice/js-validator/.counters/views.svg)
+
 # js-validator
 A Laravel styled JavaScript Object validation library.
 [Laravel Validation](http://laravel.com/docs/5.0/validation)
