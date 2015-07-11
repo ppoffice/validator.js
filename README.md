@@ -51,6 +51,7 @@ requirejs(["../src/validator"], function(validator) {
 #### Sea.js
 ```javascript
 define(function (require, exports, module) {
+  var validator = require('./validator');
   ...
 });
 ```
@@ -67,14 +68,14 @@ var rules = {
 
 ### 验证
 ```javascript
-val.validate(object_to_be_tested, rules);
+validator.validate(object_to_be_tested, rules);
 ```
 如果待验证对象符合规则，validate函数返回true；否则返回带有验证状态、失败的属性和对应失败的规则信息的对象。
 
 ### 添加验证器
 使用add方法为Validator添加验证器，第一个参数为验证器名称，第二个参数为验证方法，可以为正则表达式对象或者函数。当验证方法为函数时，其第一个参数必须为当前验证域的值，后面的参数根据需求而定，验证成功时结果返回true。
 ```javascript
-val.add('older_than', function (value, age) {
+validator.add('older_than', function (value, age) {
   return value > age;
 });
 

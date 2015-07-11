@@ -44,7 +44,7 @@ var validator = require('js-validator');
 
 #### RequireJS
 ```javascript
-requirejs(["../src/validator"], function(validator) {
+requirejs(["./validator"], function(validator) {
   ...
 });
 ```
@@ -52,6 +52,7 @@ requirejs(["../src/validator"], function(validator) {
 #### Sea.js
 ```javascript
 define(function (require, exports, module) {
+  var validator = require('./validator');
   ...
 });
 ```
@@ -68,14 +69,14 @@ var rules = {
 
 ### Validate the rules
 ```javascript
-val.validate(object_to_be_tested, rules);
+validator.validate(object_to_be_tested, rules);
 ```
 If the validation succeeded, validate function will return 'true'. Otherwise it will return error message object containing validation status, the specified field and rule that made the validation failed.
 
 ### Add a validator
 You can use add() Function to add a validator, along with a name as its first argument and a validation method as second argument. Validation method can either be RegExp object or Function. When it's a Function, its first argument must be the value of current validating field, and it should return `true` when the validation succeeded.
 ```javascript
-val.add('older_than', function (value, age) {
+validator.add('older_than', function (value, age) {
   return value > age;
 });
 
