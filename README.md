@@ -113,7 +113,10 @@ var rules = {
 
 ## 测试文件入口
 `./test/index.html`     原生JavaScript支持测试
+
 `./test/node.js`        Node.js支持测试
+
 `./test/requirejs.html` RequireJS支持测试
+
 `./test/seajs.html` Sea.js支持测试
 

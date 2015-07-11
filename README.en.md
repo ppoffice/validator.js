@@ -114,6 +114,9 @@ var rules = {
 
 ## 测试文件入口
 `./test/index.html`     Naive JavaScript support test
+
 `./test/node.js`        Node.js support test
+
 `./test/requirejs.html` RequireJS support test
+
 `./test/seajs.html` Sea.js support test
