@@ -22,22 +22,32 @@ console.log(Validator.validate(example, rules));
 
 ## 基本用法
 
-### 引入validator.js
+### 引入validator.js（原生JavaScript）
 ```html
-<script type="text/javascript" src="./validator.js"></script>
+<script type="text/javascript" src="./src/validator.js"></script>
+```
+或
+```html
+<script type="text/javascript" src="./dist/validator.min.js"></script>
 ```
 
-### 初始化（原生JavaScript使用请跳过此步）
+### 初始化（非原生JavaScript）
+
 #### Node.js
-```javascript
-var validator = require('../src/validator');
+```bash
+npm install ppoffice/js-validator --save
 ```
+```javascript
+var validator = require('js-validator');
+```
+
 #### RequireJS
 ```javascript
 requirejs(["../src/validator"], function(validator) {
   ...
 });
 ```
+
 #### Sea.js
 ```javascript
 define(function (require, exports, module) {

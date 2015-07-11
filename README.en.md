@@ -23,22 +23,32 @@ console.log(new Validator().validate(example, rules));
 
 ## Basic Usage
 
-### Import js-validator library
+### Import js-validator library(for naive JavaScript code)
 ```html
 <script type="text/javascript" src="./validator.js"></script>
 ```
+Or
+```html
+<script type="text/javascript" src="./dist/validator.min.js"></script>
+```
 
 ### Initialization(skip this if you are using naive JavaScript code)
+
 #### Node.js
-```javascript
-var validator = require('../src/validator');
+```bash
+npm install ppoffice/js-validator --save
 ```
+```javascript
+var validator = require('js-validator');
+```
+
 #### RequireJS
 ```javascript
 requirejs(["../src/validator"], function(validator) {
   ...
 });
 ```
+
 #### Sea.js
 ```javascript
 define(function (require, exports, module) {
