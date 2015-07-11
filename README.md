@@ -1,5 +1,3 @@
-![Views](https://sourcegraph.com/api/repos/github.com/ppoffice/js-validator/.counters/views.svg)
-
 # js-validator
 Laravel风格的JavaScript对象验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
 
@@ -18,7 +16,7 @@ var example = {
       comments: 'integer',
     };
 
-console.log(new Validator().validate(example, rules));
+console.log(Validator.validate(example, rules));
 // => Object {status: "failed", field: "comments", rule: "integer"}
 ```
 
@@ -29,9 +27,22 @@ console.log(new Validator().validate(example, rules));
 <script type="text/javascript" src="./validator.js"></script>
 ```
 
-### 初始化一个Validator对象
+### 初始化（原生JavaScript使用请跳过此步）
+#### Node.js
 ```javascript
-var validator = new Validator();
+var validator = require('../src/validator');
+```
+#### RequireJS
+```javascript
+requirejs(["../src/validator"], function(validator) {
+  ...
+});
+```
+#### Sea.js
+```javascript
+define(function (require, exports, module) {
+  ...
+});
 ```
 
 ### 制定验证规则
@@ -99,3 +110,10 @@ var rules = {
 |size:value  |验证域的大小必须等于指定大小。对于字符串来说，验证域的字符串长度必须等于给定长度。对于数字来说，验证域的值必须等于给定值。|
 |string      |验证域必须为字符串。|
 |url         |验证域必须为URL地址。当前不支持含有非英文（中文等）字符的地址。|
+
+## 测试文件入口
+`./test/index.html`     原生JavaScript支持测试
+`./test/node.js`        Node.js支持测试
+`./test/requirejs.html` RequireJS支持测试
+`./test/seajs.html` Sea.js支持测试
+

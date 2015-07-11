@@ -1,7 +1,6 @@
-var Validator = require('../src/validator');
+var validator = require('../src/validator');
 
-var validator = new Validator(),
-    person = {
+var person = {
       name: 'Peter',
       phone: '12345678900',
       email: 'peter@example.com',

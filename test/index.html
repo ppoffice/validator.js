@@ -6,8 +6,7 @@
 <body>
 <script type="text/javascript" src="../src/validator.js"></script>
 <script type="text/javascript">
-var validator = new Validator(),
-    person = {
+var person = {
       name: 'Peter',
       phone: '12345678900',
       email: 'peter@example.com',
@@ -30,7 +29,7 @@ var validator = new Validator(),
       smilie: 'regex:^{([a-z]*)}$',
     };
 
-validator.add('older_than', function (value, age) {
+Validator.add('older_than', function (value, age) {
   return value > age;
 });
 
@@ -39,7 +38,7 @@ document.write(JSON.stringify(person) + '<br>');
 document.write('Validation rules:<br>');
 document.write(JSON.stringify(rules) + '<br>');
 document.write('Result:<br>');
-document.write(JSON.stringify(validator.validate(person, rules)));
+document.write(JSON.stringify(Validator.validate(person, rules)));
 </script>
 </body>
 </html>

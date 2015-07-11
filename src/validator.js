@@ -5,10 +5,10 @@
  */
 
 var _window,
-	_define,
-	_require,
-	_exports,
-	_module;
+    _define,
+    _require,
+    _exports,
+    _module;
 try { _window = window; } catch (e) { _window = null; }
 try { _define = define; } catch (e) { _define = null; }
 try { _require = require; } catch (e) { _require = null; }
@@ -18,7 +18,12 @@ try { _module = module; } catch (e) { _module = null; }
 ;(function(window, define, require, exports, module){
   'use strict';
 
-  var Validator = function () {};
+  // Singleton
+  var Validator = function () {
+    if(!this.instance)
+      this.instance = this;
+    return this.instance;
+  };
 
   Validator.prototype.requires = {
 
@@ -429,14 +434,22 @@ try { _module = module; } catch (e) { _module = null; }
     return true;
   };
 
-  if(define && require && exports && module) {
-    define('Validator', function (require, exports, module) {
-      return Validator;
+  if (require && exports && module) {
+    // Node.js
+    module.exports = new Validator;
+  } else if (define && require) {
+    // RequireJS
+    define(function () {
+      return new Validator;
     });
-  } else if (require && exports && module) {
-    module.exports = Validator;
+  } else if(define) {
+    // Sea.JS
+    define(function (require, exports, module) {
+      module.exports = new Validator;
+    });
   } else if (window) {
-  	window['Validator'] = Validator;
+    // naive JavaScript
+    window['Validator'] = new Validator;
   }
 
 })(_window, _define, _require, _exports, _module);

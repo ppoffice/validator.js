@@ -1,5 +1,3 @@
-![Views](https://sourcegraph.com/api/repos/github.com/ppoffice/js-validator/.counters/views.svg)
-
 # js-validator
 A Laravel styled JavaScript Object validation library.
 [Laravel Validation](http://laravel.com/docs/5.0/validation)
@@ -30,9 +28,22 @@ console.log(new Validator().validate(example, rules));
 <script type="text/javascript" src="./validator.js"></script>
 ```
 
-### Init with a new Validator object
+### Initialization(skip this if you are using naive JavaScript code)
+#### Node.js
 ```javascript
-var validator = new Validator();
+var validator = require('../src/validator');
+```
+#### RequireJS
+```javascript
+requirejs(["../src/validator"], function(validator) {
+  ...
+});
+```
+#### Sea.js
+```javascript
+define(function (require, exports, module) {
+  ...
+});
 ```
 
 ### Make rules
@@ -100,3 +111,9 @@ var rules = {
 |size:value  |The field under validation must have a size matching the given value. For string data, value corresponds to the number of characters. For numeric data, value corresponds to a given integer value.|
 |string      |The field under validation must be a string type.|
 |url         |The field under validation must be formatted as an URL. It does not support non-English urls.|
+
+## 测试文件入口
+`./test/index.html`     Naive JavaScript support test
+`./test/node.js`        Node.js support test
+`./test/requirejs.html` RequireJS support test
+`./test/seajs.html` Sea.js support test

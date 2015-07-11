@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sea.js test</title>
+</head>
+<body>
+<script type="text/javascript" src="sea.js"></script>
+<script type="text/javascript">
+  seajs.config({
+    base: "../src/",
+    alias: {
+      "Validator": "validator.js"
+    }
+  })
+  seajs.use("./seajs-test");
+</script>
+</body>
+</html>
