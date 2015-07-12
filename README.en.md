@@ -123,7 +123,7 @@ var rules = {
 |string      |The field under validation must be a string type.|
 |url         |The field under validation must be formatted as an URL. It does not support non-English urls.|
 
-## 测试文件入口
+## Demo Entries
 `./test/index.html`     Naive JavaScript support test
 
 `./test/node.js`        Node.js support test
