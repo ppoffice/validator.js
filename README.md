@@ -97,7 +97,7 @@ var rules = {
 |between:min,max|验证域的值必须在min和max之间，验证域可以是数字或者字符串。|
 |boolean     |验证域的值可以看作是布尔值，可以是true，false，1，0，"1"，"0"，'1' and '0'。|
 |date        |验证域必须为日期字符串形式，可以被Date.parse方法解析。|
-|date_format:format|验证域必须符合制定的日期格式，允许的日期格式参照源代码中的Validator.utils.dateFormat方法。|
+|date_format:format|验证域必须符合制定的日期格式，允许的日期格式参照源代码中的dateFormat方法。|
 |different:field|验证域的值必须域指定域的值不同。|
 |digits:value|验证域必须为数字，且其位数为给定的位数。|
 |digits_between:min,max|验证域必须为数字，且其位数在min和max之间。|

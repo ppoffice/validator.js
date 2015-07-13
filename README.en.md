@@ -98,7 +98,7 @@ var rules = {
 |between:min,max|The field under validation must have a size between the given min and max.Strings and numerics are evaluated.|
 |boolean     |The field under validation must be able to be cast as a boolean. Accepted input are true, false, 1, 0, "1", "0", '1' and '-'.|
 |date        |The field under validation must be a valid date according to the Date.parse function.|
-|date_format:format|The field under validation must match the format defined according to the Validator.utils.dateFormat function.|
+|date_format:format|The field under validation must match the format defined according to the meizz's dateFormat function.|
 |different:field|The given field must be different than the field under validation.|
 |digits:value|The field under validation must be numeric and must have an exact length of value.|
 |digits_between:min,max|The field under validation must have a length between the given min and max.|

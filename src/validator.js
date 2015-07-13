@@ -8,17 +8,30 @@
   'use strict';
 
   // Singleton
-  var Validator = function () {
-    if(!this.instance)
-      this.instance = this;
-    return this.instance;
+  var Validator = function () {};
+
+  var instance = instance | new Validator,
+      __object = null;
+
+  // Validation failed at @field on @rule.
+  var fail = function (field, rule) {
+    return {
+      status: 'failed',
+      field: field,
+      rule: rule,
+    };
+  };
+
+  // Validation succeeded.
+  var success = function () {
+    return true;
   };
 
   Validator.prototype.requires = {
 
     // The field under validation must be present in the input data.
     'required': function (field) {
-      return !!this.object[field];
+      return !!__object[field];
     },
 
     // required_if:field,value,...
@@ -31,7 +44,7 @@
       for (var i = 1; i < arguments.length; i = i + 2) {
         var _field = arguments[i],
             _value = arguments[i + 1];
-        if(!this.object[_field] || this.object[_field] != _value)
+        if(!__object[_field] || __object[_field] != _value)
           return true;
       }
       return this.requires.required.call(this, field);
@@ -44,7 +57,7 @@
         return false;
       var field = arguments[0];
       for (var i = 1; i < arguments.length; i++) {
-        if(arguments[i] in this.object)
+        if(arguments[i] in __object)
           return this.requires.required.call(this, field);
       }
       return true;
@@ -57,7 +70,7 @@
         return false;
       var field = arguments[0];
       for (var i = 1; i < arguments.length; i++) {
-        if(!(arguments[i] in this.object))
+        if(!(arguments[i] in __object))
           return true;
       }
       return this.requires.required.call(this, field);
@@ -70,7 +83,7 @@
         return false;
       var field = arguments[0];
       for (var i = 1; i < arguments.length; i++) {
-        if(!(arguments[i] in this.object))
+        if(!(arguments[i] in __object))
           return this.requires.required.call(this, field);
       }
       return true;
@@ -83,7 +96,7 @@
         return false;
       var field = arguments[0];
       for (var i = 1; i < arguments.length; i++) {
-        if(arguments[i] in this.object)
+        if(arguments[i] in __object)
           return true;
       }
       return this.requires.required.call(this, field);
@@ -161,17 +174,17 @@
     },
 
     // date_format:format
-    // The field under validation must match the format defined according to the Validator.utils.dateFormat function.
+    // The field under validation must match the format defined according to the Utils.dateFormat function.
     'date_format': function (value, format) {
       var date = new Date(Date.parse(value)),
-          dateString = this.utils.dateFormat(date, format);
+          dateString = Utils.dateFormat(date, format);
       return value === dateString;
     },
 
     // different:field
     // The given field must be different than the field under validation.
     'different': function (value, field) {
-      return value != this.object[field];
+      return value != __object[field];
     },
 
     // digits:value
@@ -196,7 +209,7 @@
     'in': function () {
       if(arguments.length <= 1)
         return false;
-      return this.utils.inArray(Array.prototype.slice.call(arguments, 1), arguments[0]);
+      return Utils.inArray(Array.prototype.slice.call(arguments, 1), arguments[0]);
     },
 
     // The field under validation must have an integer value.
@@ -285,7 +298,7 @@
     // same:field
     // The given field must match the field under validation.
     'same': function (value, field) {
-      return value === this.object[field];
+      return value === __object[field];
     },
 
     // size:value
@@ -319,7 +332,7 @@
 
   };
 
-  Validator.prototype.utils = {
+  var Utils = {
 
     // author: meizz
     // Stringify date to defined formats.
@@ -374,22 +387,6 @@
 
   };
 
-  // Validation failed at @field on @rule.
-  Validator.prototype.fail = function (field, rule) {
-    delete this.object;
-    return {
-      status: 'failed',
-      field: field,
-      rule: rule,
-    };
-  };
-
-  // Validation succeeded.
-  Validator.prototype.success = function () {
-    delete this.object;
-    return true;
-  };
-
   // Add a validator.
   // @fn must be a Function or an RegExp object.
   // if @fn is a Function, it must receive value as its first argument, and return true if validation succeeds.
@@ -401,34 +398,30 @@
   };
 
   Validator.prototype.validate = function(object, _rules) {
-    this.object = object;
+    __object = object;
     for(var field in _rules) {
       var ruleString = _rules[field],
-          rules = this.utils.parser(ruleString);
+          rules = Utils.parser(ruleString);
       for (var i = 0; i < rules.length; i++) {
         var key = rules[i].key,
             value = rules[i].value;
-        // Match require rules.
-        if(key in this.requires) {
+        if(key in this.requires) {    // Match require rules.
           value.unshift(field);
           if(!this.requires[key].apply(this, value))
-            return this.fail(field, key);
-        } else if (field in this.object && key in this.validators) {
-          // Match other rules.
-          // Validator is a Function.
-          if(typeof this.validators[key] === 'function') {
-            value.unshift(this.object[field]);
+            return fail(field, key);
+        } else if (field in __object && key in this.validators) {    // Match other rules.
+          if(typeof this.validators[key] === 'function') {           // Validator is a Function.
+            value.unshift(__object[field]);
             if(!this.validators[key].apply(this, value))
-              return this.fail(field, key);
-          } else if (this.validators[key].constructor.name === 'RegExp') {
-            // Validator is an RegExp.
-            if(!this.validators[key].test(this.object[field]))
-              return this.fail(field, key);
+              return fail(field, key);
+          } else if (this.validators[key].constructor.name === 'RegExp') { // Validator is an RegExp.
+            if(!this.validators[key].test(__object[field]))
+              return fail(field, key);
           }
         }
       }
     }
-    return this.success();
+    return success();
   };
 
   if (typeof(require) !== 'undefined' && typeof(module) !== 'undefined' &&
