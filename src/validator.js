@@ -4,18 +4,7 @@
  * https://github.com/ppoffice/js-validator
  */
 
-var _window,
-    _define,
-    _require,
-    _exports,
-    _module;
-try { _window = window; } catch (e) { _window = null; }
-try { _define = define; } catch (e) { _define = null; }
-try { _require = require; } catch (e) { _require = null; }
-try { _exports = exports; } catch (e) { _exports = null; }
-try { _module = module; } catch (e) { _module = null; }
-
-;(function(window, define, require, exports, module){
+;(function(){
   'use strict';
 
   // Singleton
@@ -332,9 +321,30 @@ try { _module = module; } catch (e) { _module = null; }
 
   Validator.prototype.utils = {
 
-    // Trim string
-    trim: function (str) {
-      return str.replace(/(^\s*)|(\s*$)/g, '');
+    // author: meizz
+    // Stringify date to defined formats.
+    dateFormat: function (date, fmt) {
+      var o = {
+        'M+': date.getMonth() + 1,
+        'd+': date.getDate(),
+        'h+': date.getHours(),
+        'm+': date.getMinutes(),
+        's+': date.getSeconds(),
+        'q+': Math.floor((date.getMonth() + 3) / 3),
+        'S': date.getMilliseconds()
+      };
+      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+      for (var k in o)
+      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
+      return fmt;
+    },
+
+    inArray: function (array, value) {
+      for (var i = 0; i < array.length; i++) {
+        if(array[i] === value)
+          return true;
+      }
+      return false;
     },
 
     // Parse rule string to object.
@@ -357,36 +367,16 @@ try { _module = module; } catch (e) { _module = null; }
       return res;
     },
 
-    inArray: function (array, value) {
-      for (var i = 0; i < array.length; i++) {
-        if(array[i] === value)
-          return true;
-      }
-      return false;
-    },
-
-    // author: meizz
-    // Stringify date to defined formats.
-    dateFormat: function (date, fmt) {
-      var o = {
-        'M+': date.getMonth() + 1,
-        'd+': date.getDate(),
-        'h+': date.getHours(),
-        'm+': date.getMinutes(),
-        's+': date.getSeconds(),
-        'q+': Math.floor((date.getMonth() + 3) / 3),
-        'S': date.getMilliseconds()
-      };
-      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-      for (var k in o)
-      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
-      return fmt;
+    // Trim string
+    trim: function (str) {
+      return str.replace(/(^\s*)|(\s*$)/g, '');
     },
 
   };
 
   // Validation failed at @field on @rule.
   Validator.prototype.fail = function (field, rule) {
+    delete this.object;
     return {
       status: 'failed',
       field: field,
@@ -394,11 +384,20 @@ try { _module = module; } catch (e) { _module = null; }
     };
   };
 
+  // Validation succeeded.
+  Validator.prototype.success = function () {
+    delete this.object;
+    return true;
+  };
+
   // Add a validator.
   // @fn must be a Function or an RegExp object.
   // if @fn is a Function, it must receive value as its first argument, and return true if validation succeeds.
   Validator.prototype.add = function (name, fn) {
-    this.validators[name] = fn;
+    if(typeof(fn) === 'function' || fn.constructor.name === 'RegExp')
+      this.validators[name] = fn;
+    else
+      console.error('Invalid validator function or regular expression!');
   };
 
   Validator.prototype.validate = function(object, _rules) {
@@ -414,44 +413,41 @@ try { _module = module; } catch (e) { _module = null; }
           value.unshift(field);
           if(!this.requires[key].apply(this, value))
             return this.fail(field, key);
-        } else if (field in this.object) {
+        } else if (field in this.object && key in this.validators) {
           // Match other rules.
-          if(key in this.validators) {
-            // Validator is a Function.
-            if(typeof this.validators[key] === 'function') {
-              value.unshift(this.object[field]);
-              if(!this.validators[key].apply(this, value))
-                return this.fail(field, key);
-            } else {
-              // Validator is an RegExp.
-              if(!this.validators[key].test(this.object[field]))
-                return this.fail(field, key);
-            }
+          // Validator is a Function.
+          if(typeof this.validators[key] === 'function') {
+            value.unshift(this.object[field]);
+            if(!this.validators[key].apply(this, value))
+              return this.fail(field, key);
+          } else if (this.validators[key].constructor.name === 'RegExp') {
+            // Validator is an RegExp.
+            if(!this.validators[key].test(this.object[field]))
+              return this.fail(field, key);
           }
         }
       }
     }
-    return true;
+    return this.success();
   };
 
-  if (require && exports && module) {
-    // Node.js
-    module.exports = new Validator;
-  } else if (define && require) {
-    // RequireJS
-    define(function () {
-      return new Validator;
-    });
-  } else if(define) {
-    // Sea.JS
-    define(function (require, exports, module) {
-      module.exports = new Validator;
-    });
-  } else if (window) {
-    // naive JavaScript
-    window['Validator'] = new Validator;
+  if (typeof(require) !== 'undefined' && typeof(module) !== 'undefined' &&
+      typeof(exports !== 'undefined')) {
+    module.exports = new Validator;                    // Node.js
+  } else if (typeof(define) !== 'undefined') {
+    if(define.amd) {
+      define(function () {
+        return new Validator;                          // AMD
+      });
+    } else if(define.cmd) {
+      define(function (require, exports, module) {
+        module.exports = new Validator;                // CMD
+      });
+    }
+  } else if (typeof(window) !== 'undefined') {
+    window['Validator'] = new Validator;               // Naive
   }
 
-})(_window, _define, _require, _exports, _module);
+})();
 
 
