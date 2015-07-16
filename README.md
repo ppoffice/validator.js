@@ -1,7 +1,7 @@
-# js-validator
+# validator.js
 Laravel风格的JavaScript对象验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
 
-使用js-validator来验证对象或者JSON是否符合规则非常方便，而且具有很好的可扩展性。
+使用validator.js来验证对象或者JSON是否符合规则非常方便，而且具有很好的可扩展性。
 
 ## 举个例子
 ```javascript
@@ -35,10 +35,10 @@ console.log(Validator.validate(example, rules));
 
 #### Node.js
 ```bash
-npm install ppoffice/js-validator --save
+npm install ppoffice/validator.js --save
 ```
 ```javascript
-var validator = require('js-validator');
+var validator = require('validator.js');
 ```
 
 #### RequireJS

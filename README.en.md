@@ -1,8 +1,8 @@
-# js-validator
+# validator.js
 A Laravel styled JavaScript Object validation library.
 [Laravel Validation](http://laravel.com/docs/5.0/validation)
 
-js-validator is easy to use in form or JSON validation, and it is extensible.
+validator.js is easy to use in form or JSON validation, and it is extensible.
 
 ## Example
 ```javascript
@@ -23,7 +23,7 @@ console.log(new Validator().validate(example, rules));
 
 ## Basic Usage
 
-### Import js-validator library(for naive JavaScript code)
+### Import validator.js library(for naive JavaScript code)
 ```html
 <script type="text/javascript" src="./validator.js"></script>
 ```
@@ -36,10 +36,10 @@ Or
 
 #### Node.js
 ```bash
-npm install ppoffice/js-validator --save
+npm install ppoffice/validator.js --save
 ```
 ```javascript
-var validator = require('js-validator');
+var validator = require('validator.js');
 ```
 
 #### RequireJS
