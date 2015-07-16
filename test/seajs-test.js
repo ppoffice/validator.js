@@ -23,7 +23,7 @@ define(function (require, exports, module) {
         smilie: 'regex:^{([a-z]*)}$',
       };
 
-  validator.add('older_than', function (value, age) {
+  validator.add('older_than', function (object, value, age) {
     return value > age;
   });
 

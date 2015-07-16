@@ -68,14 +68,16 @@ var rules = {
 
 ### 验证
 ```javascript
+// Validator.validate if you are using native JavaScript code
 validator.validate(object_to_be_tested, rules);
 ```
 如果待验证对象符合规则，validate函数返回true；否则返回带有验证状态、失败的属性和对应失败的规则信息的对象。
 
 ### 添加验证器
-使用add方法为Validator添加验证器，第一个参数为验证器名称，第二个参数为验证方法，可以为正则表达式对象或者函数。当验证方法为函数时，其第一个参数必须为当前验证域的值，后面的参数根据需求而定，验证成功时结果返回true。
+使用add方法为Validator添加验证器，第一个参数为验证器名称，第二个参数为验证方法，可以为正则表达式对象或者函数。当验证方法为函数时，其第一个参数为待验证的对象，第二个参数为当前验证域的值，后面的参数根据需求而定，验证成功时结果返回true。
 ```javascript
-validator.add('older_than', function (value, age) {
+// Validator.add if you are using native JavaScript code
+validator.add('older_than', function (object, value, age) {
   return value > age;
 });
 
@@ -83,6 +85,16 @@ var rules = {
   age: 'integer|older_than:17',
 };
 ```
+
+### 配置
+```javascript
+// Validator.setConfig if you are using native JavaScript code
+validator.setConfig({...});
+```
+可用配置：
+|配置名称       |默认值 |                          |
+|:-------------|:-----|--------------------------|
+|resumeOnFailed|false |当某条验证失败时是否继续其他规则的验证。为true时继续验证。|
 
 ## 可用的验证规则
 |验证规则     |规则含义                          |

@@ -29,7 +29,7 @@ var person = {
       smilie: 'regex:^{([a-z]*)}$',
     };
 
-Validator.add('older_than', function (value, age) {
+Validator.add('older_than', function (object, value, age) {
   return value > age;
 });
 

@@ -23,7 +23,7 @@ console.log(new Validator().validate(example, rules));
 
 ## Basic Usage
 
-### Import validator.js library(for naive JavaScript code)
+### Import validator.js library(for native JavaScript code)
 ```html
 <script type="text/javascript" src="./validator.js"></script>
 ```
@@ -32,7 +32,7 @@ Or
 <script type="text/javascript" src="./dist/validator.min.js"></script>
 ```
 
-### Initialization(skip this if you are using naive JavaScript code)
+### Initialization(skip this if you are using native JavaScript code)
 
 #### Node.js
 ```bash
@@ -69,14 +69,16 @@ var rules = {
 
 ### Validate the rules
 ```javascript
+// Validator.validate if you are using native JavaScript code
 validator.validate(object_to_be_tested, rules);
 ```
 If the validation succeeded, validate function will return 'true'. Otherwise it will return error message object containing validation status, the specified field and rule that made the validation failed.
 
 ### Add a validator
-You can use add() Function to add a validator, along with a name as its first argument and a validation method as second argument. Validation method can either be RegExp object or Function. When it's a Function, its first argument must be the value of current validating field, and it should return `true` when the validation succeeded.
+You can use add() Function to add a validator, along with a name as its first argument and a validation method as second argument. Validation method can either be RegExp object or Function. When it's a Function, its first argument is the object to be tested, the second argument is the value of current validating field, and it should return `true` when the validation succeeded.
 ```javascript
-validator.add('older_than', function (value, age) {
+// Validator.add if you are using native JavaScript code
+validator.add('older_than', function (object, value, age) {
   return value > age;
 });
 
@@ -84,6 +86,16 @@ var rules = {
   age: 'integer|older_than:17',
 };
 ```
+
+### Configuration
+```javascript
+// Validator.setConfig if you are using native JavaScript code
+validator.setConfig({...});
+```
+Available configurations:
+|NAME          |DEFAULT |                          |
+|:-------------|:-------|--------------------------|
+|resumeOnFailed|false   |Whether the validation continues when it failed on any rule.|
 
 ## Available Validation Rules
 |RULES       |DESCRIPTION                      |
@@ -124,7 +136,7 @@ var rules = {
 |url         |The field under validation must be formatted as an URL. It does not support non-English urls.|
 
 ## Demo Entries
-`./test/index.html`     Naive JavaScript support test
+`./test/index.html`     native JavaScript support test
 
 `./test/node.js`        Node.js support test
 

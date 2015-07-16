@@ -7,58 +7,50 @@
 ;(function(){
   'use strict';
 
-  // Singleton
-  var Validator = function () {};
-
-  var instance = instance | new Validator,
-      __object = null;
-
-  // Validation failed at @field on @rule.
-  var fail = function (field, rule) {
-    return {
-      status: 'failed',
-      field: field,
-      rule: rule,
+  // Validator singleton
+  var Validator = function () {
+    this.config = {
+      resumeOnFailed: false,
     };
   };
-
-  // Validation succeeded.
-  var success = function () {
-    return true;
-  };
+  var instance = instance ? instance : new Validator,
+      rejects = [];
+      
 
   Validator.prototype.requires = {
 
     // The field under validation must be present in the input data.
-    'required': function (field) {
-      return !!__object[field];
+    'required': function (object, field) {
+      return !!object[field];
     },
 
-    // required_if:field,value,...
+    // required_if:field1,value1,...
     // The field under validation must be present if the field is equal to any value.
     // The relationship between each field is AND.
     'required_if': function () {
-      if(arguments.length < 3 || arguments.length % 2 != 1)
+      if(arguments.length < 4 || arguments.length % 2 != 0)
         return false;
-      var field = arguments[0];
-      for (var i = 1; i < arguments.length; i = i + 2) {
+      var object = arguments[0],
+          field  = arguments[1];
+      for (var i = 2; i < arguments.length; i = i + 2) {
         var _field = arguments[i],
             _value = arguments[i + 1];
-        if(!__object[_field] || __object[_field] != _value)
+        if(!object[_field] || object[_field] != _value)
           return true;
       }
-      return this.requires.required.call(this, field);
+      return this.requires.required(field);
     },
 
     // required_with:foo,bar,...
     // The field under validation must be present only if any of the other specified fields are present.
     'required_with': function () {
-      if(arguments.length < 2)
+      if(arguments.length < 3)
         return false;
-      var field = arguments[0];
-      for (var i = 1; i < arguments.length; i++) {
-        if(arguments[i] in __object)
-          return this.requires.required.call(this, field);
+      var object = arguments[0],
+          field  = arguments[1];
+      for (var i = 2; i < arguments.length; i++) {
+        if(arguments[i] in object)
+          return this.requires.required(field);
       }
       return true;
     },
@@ -66,25 +58,27 @@
     // required_with_all:foo,bar,...
     // The field under validation must be present only if all of the other specified fields are present.
     'required_with_all': function () {
-      if(arguments.length < 2)
+      if(arguments.length < 3)
         return false;
-      var field = arguments[0];
-      for (var i = 1; i < arguments.length; i++) {
-        if(!(arguments[i] in __object))
+      var object = arguments[0],
+          field  = arguments[1];
+      for (var i = 2; i < arguments.length; i++) {
+        if(!(arguments[i] in object))
           return true;
       }
-      return this.requires.required.call(this, field);
+      return this.requires.required(field);
     },
 
     // required_without:foo,bar,...
     // The field under validation must be present only when any of the other specified fields are not present.
     'required_without': function () {
-      if(arguments.length < 2)
+      if(arguments.length < 3)
         return false;
-      var field = arguments[0];
-      for (var i = 1; i < arguments.length; i++) {
-        if(!(arguments[i] in __object))
-          return this.requires.required.call(this, field);
+      var object = arguments[0],
+          field  = arguments[1];
+      for (var i = 2; i < arguments.length; i++) {
+        if(!(arguments[i] in object))
+          return this.requires.required(field);
       }
       return true;
     },
@@ -92,14 +86,15 @@
     // required_without_all:foo,bar,...
     // The field under validation must be present only when all of the other specified fields are not present.
     'required_without_all': function () {
-      if(arguments.length < 2)
+      if(arguments.length < 3)
         return false;
-      var field = arguments[0];
-      for (var i = 1; i < arguments.length; i++) {
-        if(arguments[i] in __object)
+      var object = arguments[0],
+          field  = arguments[1];
+      for (var i = 2; i < arguments.length; i++) {
+        if(arguments[i] in object)
           return true;
       }
-      return this.requires.required.call(this, field);
+      return this.requires.required(field);
     },
 
   };
@@ -112,7 +107,7 @@
 
     // after:date
     // The field under validation must be a value after a given date.
-    'after': function (value, date) {
+    'after': function (object, value, date) {
       var _date = Date.parse(date),
           _value = Date.parse(value);
       if(isNaN(_date) || isNaN(_value))
@@ -131,13 +126,13 @@
     'alpha_num': /^[0-9A-Za-z]+$/,
 
     // The field under validation must be of type array.
-    'array': function (value) {
+    'array': function (object, value) {
       return Object.prototype.toString.apply(value) === '[object Array]';
     },
 
     // before:date
     // The field under validation must be a value preceding the given date.
-    'before': function (value, date) {
+    'before': function (object, value, date) {
       var _date = Date.parse(date),
           _value = Date.parse(value);
       if(isNaN(_date) || isNaN(_value))
@@ -149,9 +144,9 @@
     // between:min,max
     // The field under validation must have a size between the given min and max.
     // Strings and numerics are evaluated.
-    'between': function (value, min, max) {
+    'between': function (object, value, min, max) {
       var res = false;
-      switch(typeof value) {
+      switch(typeof(value)) {
         case 'string':
           res = (value.localeCompare(min) >= 0) && (value.localeCompare(max) <= 0);
           break;
@@ -169,13 +164,13 @@
     'boolean': /^(true|false|1|0|"1"|"0"|'1'|'0')$/i,
 
     // The field under validation must be a valid date according to the Date.parse function.
-    'date': function (value) {
+    'date': function (object, value) {
       return !isNaN(Date.parse(value));
     },
 
     // date_format:format
     // The field under validation must match the format defined according to the Utils.dateFormat function.
-    'date_format': function (value, format) {
+    'date_format': function (object, value, format) {
       var date = new Date(Date.parse(value)),
           dateString = Utils.dateFormat(date, format);
       return value === dateString;
@@ -183,20 +178,20 @@
 
     // different:field
     // The given field must be different than the field under validation.
-    'different': function (value, field) {
-      return value != __object[field];
+    'different': function (object, value, field) {
+      return value != object[field];
     },
 
     // digits:value
     // The field under validation must be numeric and must have an exact length of value.
-    'digits': function (value, digits) {
+    'digits': function (object, value, digits) {
       var pattern = new RegExp('^[0-9]{' + digits + '}$');
       return pattern.test(value);
     },
 
     // digits_between:min,max
     // The field under validation must have a length between the given min and max.
-    'digits_between': function (value, min, max) {
+    'digits_between': function (object, value, min, max) {
       var pattern = new RegExp('^[0-9]{' + min + ',' + max + '}$');
       return pattern.test(value);
     },
@@ -207,18 +202,18 @@
     // in:foo,bar,...
     // The field under validation must be included in the given list of values.
     'in': function () {
-      if(arguments.length <= 1)
+      if(arguments.length <= 2)
         return false;
-      return Utils.inArray(Array.prototype.slice.call(arguments, 1), arguments[0]);
+      return Utils.inArray(Array.prototype.slice.call(arguments, 2), arguments[1]);
     },
 
     // The field under validation must have an integer value.
-    'integer': function (value) {
-      return (typeof value === 'number' && isFinite(value) && (value | 0) === value);
+    'integer': function (object, value) {
+      return (typeof(value) === 'number' && isFinite(value) && (value | 0) === value);
     },
 
     // The field under validation must be formatted as an IP address.
-    'ip': function (value) {
+    'ip': function (object, value) {
       var ipv4 = /((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))/,
           ipv6 = /^((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?$/;
       return ipv4.test(value) || ipv6.test(value);
@@ -227,9 +222,9 @@
     // max:value
     // The field under validation must be less than or equal to a maximum value.
     // Strings and numerics are evaluated.
-    'max': function (value, max) {
+    'max': function (object, value, max) {
       var res = false;
-      switch(typeof value) {
+      switch(typeof(value)) {
         case 'string':
           res = value.localeCompare(max) <= 0;
           break;
@@ -245,24 +240,24 @@
     // mimes:foo,bar,...
     // The string under validation must have a MIME type corresponding to one of the listed extensions.
     'mimes': function () {
-      if(arguments.length <= 1)
+      if(arguments.length <= 2)
         return false;
       var ret,
           extension,
-          value = arguments[0],
+          value = arguments[1],
           pattern = /\.([^\.]*)?$/;
       if((ret = pattern.exec(value)) === null || ret.length < 2)
         return false;
       extension = ret[1];
-      return this.validators.inArray(Array.prototype.slice.call(arguments, 1), extension);
+      return this.validators.inArray(Array.prototype.slice.call(arguments, 2), extension);
     },
 
     // min:value
     // The field under validation must have a minimum value.
     // Strings and numerics are evaluated.
-    'min': function (value, min) {
+    'min': function (object, value, min) {
       var res = false;
-      switch(typeof value) {
+      switch(typeof(value)) {
         case 'string':
           res = value.localeCompare(min) >= 0;
           break;
@@ -278,37 +273,37 @@
     // not_in:foo,bar,...
     // The field under validation must not be included in the given list of values.
     'not_in': function () {
-      if(arguments.length <= 1)
+      if(arguments.length <= 2)
         return false;
-      return !this.validators.inArray(Array.prototype.slice.call(arguments, 1), arguments[0]);
+      return !this.validators.inArray(Array.prototype.slice.call(arguments, 2), arguments[1]);
     },
 
     // The field under validation must have a numeric value.
-    'numeric': function (value) {
-      return typeof value === 'number' && isFinite(value);
+    'numeric': function (object, value) {
+      return typeof(value) === 'number' && isFinite(value);
     },
 
     // regex:pattern
     // The field under validation must match the given regular expression.
-    'regex': function (value, pattern) {
+    'regex': function (object, value, pattern) {
       var _pattern = new RegExp(pattern);
       return _pattern.test(value);
     },
 
     // same:field
     // The given field must match the field under validation.
-    'same': function (value, field) {
-      return value === __object[field];
+    'same': function (object, value, field) {
+      return value === object[field];
     },
 
     // size:value
     // The field under validation must have a size matching the given value.
     // For string data, value corresponds to the number of characters.
     // For numeric data, value corresponds to a given integer value.
-    'size': function (value, size) {
+    'size': function (object, value, size) {
       var res = false;
       size = Number(size);
-      switch(typeof value) {
+      switch(typeof(value)) {
         case 'string':
           res = size === value.length;
           break;
@@ -322,8 +317,8 @@
     },
 
     // The field under validation must be a string type.
-    'string': function (value) {
-      return typeof value === 'string';
+    'string': function (object, value) {
+      return typeof(value) === 'string';
     },
 
     // The field under validation must be formatted as an URL.
@@ -352,32 +347,19 @@
       return fmt;
     },
 
+    extend: function (targetObj, sourceObj) {
+      for(var property in sourceObj) {
+        targetObj[property] = sourceObj[property];
+      }
+      return targetObj;
+    },
+
     inArray: function (array, value) {
       for (var i = 0; i < array.length; i++) {
         if(array[i] === value)
           return true;
       }
       return false;
-    },
-
-    // Parse rule string to object.
-    parser: function (value) {
-      var fields = value.split('|'),
-          res = [];
-      for (var i = 0; i < fields.length; i++) {
-        var field = fields[i].split(':'),
-            key = field[0],
-            values = [];
-        if(field.length === 2)
-          values = field[1].split(',');
-
-        key = this.trim(key);
-        for (var j = 0; j < values.length; j++) {
-          values[j] = this.trim(values[j]);
-        }
-        res.push({key: key, value: values});
-      }
-      return res;
     },
 
     // Trim string
@@ -397,34 +379,85 @@
       console.error('Invalid validator function or regular expression!');
   };
 
-  Validator.prototype.validate = function(object, _rules) {
-    __object = object;
+  Validator.prototype.setConfig = function (config) {
+    this.config = Utils.extend(this.config, config);
+  };
+
+  // Parse rule string to object array.
+  var parse = function (value) {
+    var fields = value.split('|'),
+        res    = [];
+
+    for (var i = 0; i < fields.length; i++) {
+      var field  = fields[i].split(':'),
+          key    = field[0],
+          values = [];
+
+      if(field.length === 2)
+        values = field[1].split(',');
+      key = Utils.trim(key);
+      for (var j = 0; j < values.length; j++) {
+        values[j] = Utils.trim(values[j]);
+      }
+      res.push({key: key, value: values});
+    }
+    return res;
+  };
+
+  // Run single validation.
+  // @param {Object} validatorGroup Requires or validators
+  // @param {Object} rule Rule key-value
+  // @param {String} append Field name or value to be appended to rule value
+  var run = function (object, validatorGroup, rule, append) {
+    // Skip if rule is not in the group
+    if(!(rule.key in validatorGroup))
+      return true;
+    var validator = validatorGroup[rule.key];
+    if(typeof(validator) === 'function') {
+      rule.value.unshift(object, append);
+      return validator.apply(instance, rule.value);
+    } else if (validator.constructor.name === 'RegExp') {
+      return validator.test(append);
+    }
+  };
+
+  // Breakdown validation rules and run tests.
+  var validate = function (object, _rules) {
     for(var field in _rules) {
-      var ruleString = _rules[field],
-          rules = Utils.parser(ruleString);
+      var ruleValue = _rules[field],
+          rules;
+      if(typeof(ruleValue) === 'object' && field in object) {
+        if(validate.apply(this, [object[field], _rules[field]]) || this.config.resumeOnFailed)
+          continue;
+        else
+          return false;
+      } else if (typeof(ruleValue) === 'string') {
+        rules = parse(ruleValue);
+      }
+
       for (var i = 0; i < rules.length; i++) {
-        var key = rules[i].key,
+        var key   = rules[i].key,
             value = rules[i].value;
-        if(key in this.requires) {    // Match require rules.
-          value.unshift(field);
-          if(!this.requires[key].apply(this, value))
-            return fail(field, key);
-        } else if (field in __object && key in this.validators) {    // Match other rules.
-          if(typeof this.validators[key] === 'function') {           // Validator is a Function.
-            value.unshift(__object[field]);
-            if(!this.validators[key].apply(this, value))
-              return fail(field, key);
-          } else if (this.validators[key].constructor.name === 'RegExp') { // Validator is an RegExp.
-            if(!this.validators[key].test(__object[field]))
-              return fail(field, key);
-          }
+
+        if(!run(object, this.requires, rules[i], field) ||
+          (field in object && !run(object, this.validators, rules[i], object[field]))) {
+          rejects.push({ object: object, field: field, rule: key });
+          if(!this.config.resumeOnFailed)
+            return false;
         }
       }
     }
-    return success();
+    return true;
+  }
+
+  Validator.prototype.validate = function(object, rules) {
+    rejects = [];
+    validate.apply(this, [object, rules]);
+    return rejects;
   };
 
-  if (typeof(require) !== 'undefined' && typeof(module) !== 'undefined' &&
+  if (typeof(require) !== 'undefined' &&
+      typeof(module) !== 'undefined' &&
       typeof(exports !== 'undefined')) {
     module.exports = new Validator;                    // Node.js
   } else if (typeof(define) !== 'undefined') {
@@ -438,9 +471,7 @@
       });
     }
   } else if (typeof(window) !== 'undefined') {
-    window['Validator'] = new Validator;               // Naive
+    window['Validator'] = new Validator;               // Native
   }
 
 })();
-
-
