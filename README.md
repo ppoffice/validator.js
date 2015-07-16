@@ -1,23 +1,32 @@
 # validator.js
-Laravel风格的JavaScript对象验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
-
-使用validator.js来验证对象或者JSON是否符合规则非常方便，而且具有很好的可扩展性。
+Laravel风格的*JavaScript对象*验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
+* 支持不同验证规则组合
+* 支持复杂对象的递归验证
+* 支持添加自定义验证器
 
 ## 举个例子
 ```javascript
 var example = {
       text: 'Hello world!',
       date: '2015-07-07',
+      attachment: {
+        name: 'note1',
+        count: 1,
+      },
       comments: null,
     },
     rules = {
       text: 'required|string',
       date: 'date|date_format:yyyy-MM-dd',
-      comments: 'integer',
+      attachment: {
+        name: 'required|string',
+        content: 'integer',
+      },
+      comments: 'array',
     };
 
 console.log(Validator.validate(example, rules));
-// => Object {status: "failed", field: "comments", rule: "integer"}
+// failed => Object {object: [Object], field: "comments", rule: "array"}
 ```
 
 ## 基本用法
@@ -91,7 +100,8 @@ var rules = {
 // Validator.setConfig if you are using native JavaScript code
 validator.setConfig({...});
 ```
-可用配置：
+### 可用配置：
+
 |配置名称       |默认值 |                          |
 |:-------------|:-----|--------------------------|
 |resumeOnFailed|false |当某条验证失败时是否继续其他规则的验证。为true时继续验证。|
