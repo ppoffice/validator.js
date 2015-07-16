@@ -1,5 +1,5 @@
 # validator.js
-A Laravel styled *JavaScript Object* validation library.
+A Laravel styled **JavaScript Object/Form/JSON** validation library.
 [Laravel Validation](http://laravel.com/docs/5.0/validation)
 * Support mixin validation rules
 * Support recursive validation on complicate objects
@@ -29,7 +29,7 @@ var example = {
     };
 
 console.log(Validator.validate(example, rules));
-// failed => Object {object: [Object], field: "comments", rule: "array"}
+// failed => [{object: [Object], field: "comments", rule: "array"}]
 ```
 
 ## Basic Usage

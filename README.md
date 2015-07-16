@@ -1,5 +1,5 @@
 # validator.js
-Laravel风格的*JavaScript对象*验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
+Laravel风格的**JavaScript对象/表单/JSON**验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
 * 支持不同验证规则组合
 * 支持复杂对象的递归验证
 * 支持添加自定义验证器
@@ -26,7 +26,7 @@ var example = {
     };
 
 console.log(Validator.validate(example, rules));
-// failed => Object {object: [Object], field: "comments", rule: "array"}
+// failed => [{object: [Object], field: "comments", rule: "array"}]
 ```
 
 ## 基本用法
