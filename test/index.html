@@ -4,6 +4,17 @@
   <title>js-validator test</title>
 </head>
 <body>
+<div>
+  <span id="testOrigin"></span>
+  <span id="testRules"></span>
+  <span id="testResult"></span>
+</div>
+<div>
+  <input type="file" id="input" onchange="validateFiles(this.files)">
+  <span id="fileOrigin"></span>
+  <span id="fileRules"></span>
+  <span id="fileResult"></span>
+</div>
 <script type="text/javascript" src="../src/validator.js"></script>
 <script type="text/javascript">
 var person = {
@@ -33,12 +44,21 @@ Validator.add('older_than', function (object, value, age) {
   return value > age;
 });
 
-document.write('Object to be tested:<br>');
-document.write(JSON.stringify(person) + '<br>');
-document.write('Validation rules:<br>');
-document.write(JSON.stringify(rules) + '<br>');
-document.write('Result:<br>');
-document.write(JSON.stringify(Validator.validate(person, rules)));
+document.getElementById('testOrigin').innerHTML = 'Object to be tested:<br>' + JSON.stringify(person) + '<br>';
+document.getElementById('testRules').innerHTML = 'Validation rules:<br>' + JSON.stringify(rules) + '<br>';
+document.getElementById('testResult').innerHTML = 'Result:<br>' + JSON.stringify(Validator.validate(person, rules));
+
+var validateFiles = function (files) {
+  var rule = {
+        files: 'required|min:1024|max:2048'
+      },
+      fileObj = {
+        files: files
+      };
+  document.getElementById('fileOrigin').innerHTML = 'Files to be tested:<br>' + JSON.stringify(fileObj) + '<br>';
+  document.getElementById('fileRules').innerHTML = 'Validation rules:<br>' + JSON.stringify(rule) + '<br>';
+  document.getElementById('fileResult').innerHTML = 'Result:<br>' + JSON.stringify(Validator.validate(fileObj, rule));
+};
 </script>
 </body>
 </html>

@@ -100,49 +100,150 @@ var rules = {
 // Validator.setConfig if you are using native JavaScript code
 validator.setConfig({...});
 ```
-### 可用配置：
+### 可用配置
 
-|配置名称       |默认值 |                          |
-|:-------------|:-----|--------------------------|
-|resumeOnFailed|false |当某条验证失败时是否继续其他规则的验证。为true时继续验证。|
+#### resumeOnFailed
+**默认值** false
+
+当某条验证失败时是否继续其他规则的验证。为true时继续验证。
 
 ## 可用的验证规则
-|验证规则     |规则含义                          |
-|:-----------|:--------------------------------|
-|accepted    |验证域必须为yes、on、1、或者true。 这个规则常用语验证“同意使用条款”表单。|
-|after:date  |验证的日期域的日期必须在指定日期之后。|
-|alpha       |验证域必须由纯英文字符组成。|
-|alpha_dash  |验证域必须由英文字符、数字、中划线或者下划线组成。|
-|alpha_num   |验证域必须由英文字符或者数字组成。|
-|array       |验证域必须为数组对象。|
-|before:date |验证的日期域的日期必须在给定日期之前。|
-|between:min,max|验证域的值必须在min和max之间，验证域可以是数字或者字符串。|
-|boolean     |验证域的值可以看作是布尔值，可以是true，false，1，0，"1"，"0"，'1' and '0'。|
-|date        |验证域必须为日期字符串形式，可以被Date.parse方法解析。|
-|date_format:format|验证域必须符合制定的日期格式，允许的日期格式参照源代码中的dateFormat方法。|
-|different:field|验证域的值必须域指定域的值不同。|
-|digits:value|验证域必须为数字，且其位数为给定的位数。|
-|digits_between:min,max|验证域必须为数字，且其位数在min和max之间。|
-|email       |验证域必须为电子邮件地址格式。|
-|in:foo,bar,...|验证域的值必须在给定的允许值列表中。|
-|integer     |验证值必须为整数。|
-|ip          |验证值必须为IP地址形式（支持IPv4与IPv6）。|
-|max:value   |验证域的值必须小于等于max，验证域可以是数字或者字符串。|
-|mimes:foo,bar,...|验证值的扩展名必须在给定的扩展名列表中。|
-|min:value   |验证域的值必须大于等于min，验证域可以是数字或者字符串。|
-|not_in:foo,bar,...|验证域的值必须不在给定的值列表中。|
-|numeric     |验证域必须为数字。|
-|regex       |验证域必须符合指定的正则表达式（JavaScript风格）。|
-|required    |验证域必须存在。|
-|required_if:field,value,...|如果给定的域的值等于给定的值，验证域必须存在。这里的条件可以是多个域和值，它们之间的关系为“与”。|
-|required_with:foo,bar,...|如果给定的域之中任何一个存在的话，验证域必须存在。|
-|required_with_all:foo,bar,...|仅当所有给定的域存在时，验证域必须存在。|
-|required_without:foo,bar,...|如果给定的域之中任何一个不存在的话，验证域必须存在。|
-|required_without_all:foo,bar,...|仅当所有给定的所有域都不存在时，验证域必须存在。|
-|same        |验证域的值必须域指定域的值相同。|
-|size:value  |验证域的大小必须等于指定大小。对于字符串来说，验证域的字符串长度必须等于给定长度。对于数字来说，验证域的值必须等于给定值。|
-|string      |验证域必须为字符串。|
-|url         |验证域必须为URL地址。当前不支持含有非英文（中文等）字符的地址。|
+
+#### accepted
+验证域必须为yes、on、1、或者true。 这个规则常用语验证“同意使用条款”表单。
+
+
+#### after:date
+验证的日期域的日期必须在指定日期之后。
+
+
+#### alpha
+验证域必须由纯英文字符组成。
+
+
+#### alpha_dash
+验证域必须由英文字符、数字、中划线或者下划线组成。
+
+
+#### alpha_num
+验证域必须由英文字符或者数字组成。
+
+
+#### array
+验证域必须为数组对象。
+
+
+#### before:date
+验证的日期域的日期必须在给定日期之前。
+
+
+#### between:min,max
+验证域的值必须在min和max之间，验证域可以是字符串、数字或者文件对象(FileList/File)。文件大小单位为KB。
+
+
+#### boolean
+验证域的值可以看作是布尔值，可以是true，false，1，0，"1"，"0"，'1' and '0'。
+
+
+#### date
+验证域必须为日期字符串形式，可以被Date.parse方法解析。
+
+
+#### date_format:format
+验证域必须符合制定的日期格式，允许的日期格式参照源代码中的dateFormat方法。
+
+
+#### different:field
+验证域的值必须域指定域的值不同。
+
+
+#### digits:value
+验证域必须为数字，且其位数为给定的位数。
+
+
+#### digits_between:min,max
+验证域必须为数字，且其位数在min和max之间。
+
+
+#### email
+验证域必须为电子邮件地址格式。
+
+
+#### in:foo,bar,...
+验证域的值必须在给定的允许值列表中。
+
+
+#### integer
+验证值必须为整数。
+
+
+#### ip
+验证值必须为IP地址形式（支持IPv4与IPv6）。
+
+
+#### max:value
+验证域的值必须小于等于max，验证域可以是字符串、数字或者文件对象(FileList/File)。文件大小单位为KB。
+
+
+#### mimes:foo,bar,...
+验证值的扩展名必须在给定的扩展名列表中。
+
+
+#### min:value
+验证域的值必须大于等于min，验证域可以是字符串、数字或者文件对象(FileList/File)。文件大小单位为KB。
+
+
+#### not_in:foo,bar,...
+验证域的值必须不在给定的值列表中。
+
+
+#### numeric
+验证域必须为数字。
+
+
+#### regex
+验证域必须符合指定的正则表达式（JavaScript风格）。
+
+
+#### required
+验证域必须存在。
+
+
+#### required_if:field,value,...
+如果给定的域的值等于给定的值，验证域必须存在。这里的条件可以是多个域和值，它们之间的关系为“与”。
+
+
+#### required_with:foo,bar,...
+如果给定的域之中任何一个存在的话，验证域必须存在。
+
+
+#### required_with_all:foo,bar,...
+仅当所有给定的域存在时，验证域必须存在。
+
+
+#### required_without:foo,bar,...
+如果给定的域之中任何一个不存在的话，验证域必须存在。
+
+
+#### required_without_all:foo,bar,...
+仅当所有给定的所有域都不存在时，验证域必须存在。
+
+
+#### same
+验证域的值必须域指定域的值相同。
+
+
+#### size:value
+验证域的大小必须等于指定大小。对于字符串来说，验证域的字符串长度必须等于给定长度。对于数字来说，验证域的值必须等于给定值。对于文件(FileList/File)来说，文件的大小必须等于给定值（单位为KB）。
+
+
+#### string
+验证域必须为字符串。
+
+
+#### url
+验证域必须为URL地址。当前不支持含有非英文（中文等）字符的地址。
+
 
 ## 测试文件入口
 `./test/index.html`     原生JavaScript支持测试

@@ -15,6 +15,54 @@
   };
   var instance = instance ? instance : new Validator,
       rejects = [];
+
+  var Utils = {
+
+    // author: meizz
+    // Stringify date to defined formats.
+    dateFormat: function (date, fmt) {
+      var o = {
+        'M+': date.getMonth() + 1,
+        'd+': date.getDate(),
+        'h+': date.getHours(),
+        'm+': date.getMinutes(),
+        's+': date.getSeconds(),
+        'q+': Math.floor((date.getMonth() + 3) / 3),
+        'S': date.getMilliseconds()
+      };
+      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+      for (var k in o)
+      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
+      return fmt;
+    },
+
+    extend: function (targetObj, sourceObj) {
+      for(var property in sourceObj) {
+        targetObj[property] = sourceObj[property];
+      }
+      return targetObj;
+    },
+
+    inArray: function (array, value) {
+      for (var i = 0; i < array.length; i++) {
+        if(array[i] === value)
+          return true;
+      }
+      return false;
+    },
+
+    typeof: function (value) {
+      var type = Object.prototype.toString.call(value),
+          arr = (type = type.split(' ')) && type.length > 1 ? type[1].substr(0, type[1].length - 1) : '';
+      return arr.toLowerCase();
+    },
+
+    // Trim string
+    trim: function (str) {
+      return str.replace(/(^\s*)|(\s*$)/g, '');
+    },
+
+  };
       
 
   Validator.prototype.requires = {
@@ -143,15 +191,32 @@
 
     // between:min,max
     // The field under validation must have a size between the given min and max.
-    // Strings and numerics are evaluated.
+    // Strings, numerics and files are evaluated.
+    // Files are evaluated in kilobytes.
     'between': function (object, value, min, max) {
       var res = false;
-      switch(typeof(value)) {
+      min = Number(min);
+      max = Number(max);
+      switch(Utils.typeof(value)) {
         case 'string':
           res = (value.localeCompare(min) >= 0) && (value.localeCompare(max) <= 0);
           break;
         case 'number':
           res = (value >= min) && (value <= max);
+          break;
+        case 'filelist':
+          res = !!value.length;
+          for (var i in value) {
+            if(!res || !value.hasOwnProperty(i) || Utils.typeof(value[i]) !== 'file')
+              continue;
+            var file = value[i];
+            res = res && (parseInt(file.size/1024) >= min &&  parseInt(file.size/1024) <= max);
+            if(!res)
+              break;
+          }
+          break;
+        case 'file':
+          res = parseInt(value.size/1024) >= min &&  parseInt(value.size/1024) <= max;
           break;
         default:
           break;
@@ -209,7 +274,7 @@
 
     // The field under validation must have an integer value.
     'integer': function (object, value) {
-      return (typeof(value) === 'number' && isFinite(value) && (value | 0) === value);
+      return (Utils.typeof(value) === 'number' && isFinite(value) && (value | 0) === value);
     },
 
     // The field under validation must be formatted as an IP address.
@@ -221,15 +286,29 @@
 
     // max:value
     // The field under validation must be less than or equal to a maximum value.
-    // Strings and numerics are evaluated.
+    // Strings, numerics and files are evaluated.
+    // Files are evaluated in kilobytes.
     'max': function (object, value, max) {
       var res = false;
-      switch(typeof(value)) {
+      max = Number(max);
+      switch(Utils.typeof(value)) {
         case 'string':
           res = value.localeCompare(max) <= 0;
           break;
         case 'number':
           res = value <= max;
+          break;
+        case 'filelist':
+          res = !!value.length;
+          for (var i in value) {
+            if(!res || !value.hasOwnProperty(i) || Utils.typeof(value[i]) !== 'file')
+              continue;
+            var file = value[i];
+            res = res && parseInt(file.size/1024) <= max;
+          }
+          break;
+        case 'file':
+          res = parseInt(value.size/1024) <= max;
           break;
         default:
           break;
@@ -254,15 +333,31 @@
 
     // min:value
     // The field under validation must have a minimum value.
-    // Strings and numerics are evaluated.
+    // Strings, numerics and files are evaluated.
+    // Files are evaluated in kilobytes.
     'min': function (object, value, min) {
       var res = false;
-      switch(typeof(value)) {
+      min = Number(min);
+      switch(Utils.typeof(value)) {
         case 'string':
           res = value.localeCompare(min) >= 0;
           break;
         case 'number':
           res = value >= min;
+          break;
+        case 'filelist':
+          res = !!value.length;
+          for (var i in value) {
+            if(!res || !value.hasOwnProperty(i) || Utils.typeof(value[i]) !== 'file')
+              continue;
+            var file = value[i];
+            res = res && parseInt(file.size/1024) >= min;
+            if(!res)
+              break;
+          }
+          break;
+        case 'file':
+          res = parseInt(value.size/1024) >= min;
           break;
         default:
           break;
@@ -280,7 +375,7 @@
 
     // The field under validation must have a numeric value.
     'numeric': function (object, value) {
-      return typeof(value) === 'number' && isFinite(value);
+      return Utils.typeof(value) === 'number' && isFinite(value);
     },
 
     // regex:pattern
@@ -300,15 +395,28 @@
     // The field under validation must have a size matching the given value.
     // For string data, value corresponds to the number of characters.
     // For numeric data, value corresponds to a given integer value.
+    // For file, size corresponds to the file size in kilobytes.
     'size': function (object, value, size) {
       var res = false;
       size = Number(size);
-      switch(typeof(value)) {
+      switch(Utils.typeof(value)) {
         case 'string':
           res = size === value.length;
           break;
         case 'number':
           res = value === size;
+          break;
+        case 'filelist':
+          res = !!value.length;
+          for (var i in value) {
+            if(!res || !value.hasOwnProperty(i) || Utils.typeof(value[i]) !== 'file')
+              continue;
+            var file = value[i];
+            res = res && parseInt(file.size/1024) === size;
+          }
+          break;
+        case 'file':
+          res = parseInt(value.size/1024) === size;
           break;
         default:
           break;
@@ -318,7 +426,7 @@
 
     // The field under validation must be a string type.
     'string': function (object, value) {
-      return typeof(value) === 'string';
+      return Utils.typeof(value) === 'string';
     },
 
     // The field under validation must be formatted as an URL.
@@ -327,53 +435,11 @@
 
   };
 
-  var Utils = {
-
-    // author: meizz
-    // Stringify date to defined formats.
-    dateFormat: function (date, fmt) {
-      var o = {
-        'M+': date.getMonth() + 1,
-        'd+': date.getDate(),
-        'h+': date.getHours(),
-        'm+': date.getMinutes(),
-        's+': date.getSeconds(),
-        'q+': Math.floor((date.getMonth() + 3) / 3),
-        'S': date.getMilliseconds()
-      };
-      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-      for (var k in o)
-      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
-      return fmt;
-    },
-
-    extend: function (targetObj, sourceObj) {
-      for(var property in sourceObj) {
-        targetObj[property] = sourceObj[property];
-      }
-      return targetObj;
-    },
-
-    inArray: function (array, value) {
-      for (var i = 0; i < array.length; i++) {
-        if(array[i] === value)
-          return true;
-      }
-      return false;
-    },
-
-    // Trim string
-    trim: function (str) {
-      return str.replace(/(^\s*)|(\s*$)/g, '');
-    },
-
-  };
-
   // Add a validator.
   // @fn must be a Function or an RegExp object.
   // if @fn is a Function, it must receive value as its first argument, and return true if validation succeeds.
   Validator.prototype.add = function (name, fn) {
-    if(typeof(fn) === 'function' || fn.constructor.name === 'RegExp')
+    if(Utils.typeof(fn) === 'function' || Utils.typeof(fn) === 'regexp')
       this.validators[name] = fn;
     else
       console.error('Invalid validator function or regular expression!');
@@ -413,7 +479,7 @@
     if(!(rule.key in validatorGroup))
       return true;
     var validator = validatorGroup[rule.key];
-    if(typeof(validator) === 'function') {
+    if(Utils.typeof(validator) === 'function') {
       rule.value.unshift(object, append);
       return validator.apply(instance, rule.value);
     } else if (validator.constructor.name === 'RegExp') {
@@ -426,12 +492,12 @@
     for(var field in _rules) {
       var ruleValue = _rules[field],
           rules;
-      if(typeof(ruleValue) === 'object' && field in object) {
+      if(Utils.typeof(ruleValue) === 'object' && field in object) {
         if(validate.apply(this, [object[field], _rules[field]]) || this.config.resumeOnFailed)
           continue;
         else
           return false;
-      } else if (typeof(ruleValue) === 'string') {
+      } else if (Utils.typeof(ruleValue) === 'string') {
         rules = parse(ruleValue);
       }
 
@@ -458,7 +524,7 @@
 
   if (typeof(require) !== 'undefined' &&
       typeof(module) !== 'undefined' &&
-      typeof(exports !== 'undefined')) {
+      typeof(exports) !== 'undefined') {
     module.exports = new Validator;                    // Node.js
   } else if (typeof(define) !== 'undefined') {
     if(define.amd) {
