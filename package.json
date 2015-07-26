@@ -1,8 +1,10 @@
 {
   "name": "validatorjs",
   "version": "1.1.2",
-  "description": "A laravel-styled JavaScript Object/Form/JSON validation library.",
+  "npmName": "validatorjs",
   "main": "./src/validator.js",
+  "filename": "./dist/validator.min.js",
+  "description": "A laravel-styled JavaScript Object/Form/JSON validation library.",
   "directories": {
     "test": "test"
   },
