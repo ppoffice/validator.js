@@ -1,7 +1,7 @@
 {
-  "name": "js-validator",
+  "name": "validatorjs",
   "version": "1.0.0",
-  "description": "A laravel-styled JavaScript Object validation library.",
+  "description": "A laravel-styled JavaScript Object/Form/JSON validation library.",
   "main": "./src/validator.js",
   "directories": {
     "test": "test"
@@ -17,17 +17,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ppoffice/js-validator.git"
+    "url": "git+https://github.com/ppoffice/validator.js.git"
   },
   "keywords": [
-    "JavaScript",
+    "javascript",
+    "validator",
     "validation",
     "laravel"
   ],
   "author": "PPOffice",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ppoffice/js-validator/issues"
+    "url": "https://github.com/ppoffice/validator.js/issues"
   },
-  "homepage": "https://github.com/ppoffice/js-validator#readme"
+  "homepage": "https://github.com/ppoffice/validator.js#readme"
 }
