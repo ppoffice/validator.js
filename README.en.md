@@ -47,10 +47,10 @@ Or
 
 #### Node.js
 ```bash
-npm install ppoffice/validator.js --save
+npm install js-validator --save
 ```
 ```javascript
-var validator = require('validator.js');
+var validator = require('js-validator');
 ```
 
 #### RequireJS
