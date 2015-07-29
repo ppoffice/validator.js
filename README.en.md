@@ -1,6 +1,7 @@
 # validator.js
 [![npm version](https://badge.fury.io/js/js-validator.svg)](http://badge.fury.io/js/js-validator)
 [![GitHub version](https://badge.fury.io/gh/ppoffice%2Fvalidator.js.svg)](http://badge.fury.io/gh/ppoffice%2Fvalidator.js)
+
 A Laravel styled **JavaScript Object/Form/JSON** validation library.
 [Laravel Validation](http://laravel.com/docs/5.0/validation)
 * Support mixin validation rules
