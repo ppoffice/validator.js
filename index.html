@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Validator.js by ppoffice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Validator.js</h1>
+      <h2 class="project-tagline">A Laravel styled JavaScript Object/Form/JSON validation library.</h2>
+      <a href="https://github.com/ppoffice/validator.js" class="btn">View on GitHub</a>
+      <a href="https://github.com/ppoffice/validator.js/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/ppoffice/validator.js/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="validatorjs" class="anchor" href="#validatorjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>validator.js</h1>
+
+<p><a href="http://badge.fury.io/js/js-validator"><img src="https://badge.fury.io/js/js-validator.svg" alt="npm version"></a>
+<a href="http://badge.fury.io/gh/ppoffice%2Fvalidator.js"><img src="https://badge.fury.io/gh/ppoffice%2Fvalidator.js.svg" alt="GitHub version"></a></p>
+
+<p>Laravel风格的<strong>JavaScript对象/表单/JSON</strong>验证库。| <a href="README.en.md">English Version</a> | <a href="http://laravel.com/docs/5.0/validation">Laravel Validation</a></p>
+
+<ul>
+<li>支持不同验证规则组合</li>
+<li>支持复杂对象的递归验证</li>
+<li>支持添加自定义验证器</li>
+</ul>
+
+<h2>
+<a id="举个例子" class="anchor" href="#%E4%B8%BE%E4%B8%AA%E4%BE%8B%E5%AD%90" aria-hidden="true"><span class="octicon octicon-link"></span></a>举个例子</h2>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-k">var</span> example <span class="pl-k">=</span> {
+      text<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Hello world!<span class="pl-pds">'</span></span>,
+      date<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>2015-07-07<span class="pl-pds">'</span></span>,
+      attachment<span class="pl-k">:</span> {
+        name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>note1<span class="pl-pds">'</span></span>,
+        count<span class="pl-k">:</span> <span class="pl-c1">1</span>,
+      },
+      comments<span class="pl-k">:</span> <span class="pl-c1">null</span>,
+    },
+    rules <span class="pl-k">=</span> {
+      text<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>required|string<span class="pl-pds">'</span></span>,
+      date<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>date|date_format:yyyy-MM-dd<span class="pl-pds">'</span></span>,
+      attachment<span class="pl-k">:</span> {
+        name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>required|string<span class="pl-pds">'</span></span>,
+        content<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>integer<span class="pl-pds">'</span></span>,
+      },
+      comments<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>array<span class="pl-pds">'</span></span>,
+    };
+
+<span class="pl-en">console</span><span class="pl-c1">.log</span>(Validator.validate(example, rules));
+<span class="pl-c">// failed =&gt; [{object: [Object], field: "comments", rule: "array"}]</span></pre></div>
+
+<h2>
+<a id="基本用法" class="anchor" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>基本用法</h2>
+
+<h3>
+<a id="引入validatorjs原生javascript" class="anchor" href="#%E5%BC%95%E5%85%A5validatorjs%E5%8E%9F%E7%94%9Fjavascript" aria-hidden="true"><span class="octicon octicon-link"></span></a>引入validator.js（原生JavaScript）</h3>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>./src/validator.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<p>或</p>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>./dist/validator.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<h3>
+<a id="初始化非原生javascript" class="anchor" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%9D%9E%E5%8E%9F%E7%94%9Fjavascript" aria-hidden="true"><span class="octicon octicon-link"></span></a>初始化（非原生JavaScript）</h3>
+
+<h4>
+<a id="nodejs" class="anchor" href="#nodejs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Node.js</h4>
+
+<div class="highlight highlight-bash"><pre>npm install js-validator --save</pre></div>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-k">var</span> validator <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>js-validator<span class="pl-pds">'</span></span>);</pre></div>
+
+<h4>
+<a id="requirejs" class="anchor" href="#requirejs" aria-hidden="true"><span class="octicon octicon-link"></span></a>RequireJS</h4>
+
+<div class="highlight highlight-javascript"><pre>requirejs([<span class="pl-s"><span class="pl-pds">"</span>../src/validator<span class="pl-pds">"</span></span>], <span class="pl-k">function</span>(<span class="pl-smi">validator</span>) {
+  ...
+});</pre></div>
+
+<h4>
+<a id="seajs" class="anchor" href="#seajs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sea.js</h4>
+
+<div class="highlight highlight-javascript"><pre>define(<span class="pl-k">function</span> (<span class="pl-smi">require</span>, <span class="pl-smi">exports</span>, <span class="pl-smi">module</span>) {
+  <span class="pl-k">var</span> validator <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>./validator<span class="pl-pds">'</span></span>);
+  ...
+});</pre></div>
+
+<h3>
+<a id="制定验证规则" class="anchor" href="#%E5%88%B6%E5%AE%9A%E9%AA%8C%E8%AF%81%E8%A7%84%E5%88%99" aria-hidden="true"><span class="octicon octicon-link"></span></a>制定验证规则</h3>
+
+<p>对于同一个对象属性，你可以并列制定几个不同的规则进行限定，使用<code>|</code>作为不同规则间的分割符。</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-k">var</span> rules <span class="pl-k">=</span> {
+  text<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>required|string<span class="pl-pds">'</span></span>,
+  date<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>date|date_format:yyyy-MM-dd<span class="pl-pds">'</span></span>,
+  comments<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>integer<span class="pl-pds">'</span></span>,
+};</pre></div>
+
+<h3>
+<a id="验证" class="anchor" href="#%E9%AA%8C%E8%AF%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">// Validator.validate if you are using native JavaScript code</span>
+validator.validate(object_to_be_tested, rules);</pre></div>
+
+<p>如果待验证对象符合规则，validate函数返回true；否则返回带有验证状态、失败的属性和对应失败的规则信息的对象。</p>
+
+<h3>
+<a id="添加验证器" class="anchor" href="#%E6%B7%BB%E5%8A%A0%E9%AA%8C%E8%AF%81%E5%99%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加验证器</h3>
+
+<p>使用add方法为Validator添加验证器，第一个参数为验证器名称，第二个参数为验证方法，可以为正则表达式对象或者函数。当验证方法为函数时，其第一个参数为待验证的对象，第二个参数为当前验证域的值，后面的参数根据需求而定，验证成功时结果返回true。</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">// Validator.add if you are using native JavaScript code</span>
+validator.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span>older_than<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">object</span>, <span class="pl-smi">value</span>, <span class="pl-smi">age</span>) {
+  <span class="pl-k">return</span> value <span class="pl-k">&gt;</span> age;
+});
+
+<span class="pl-k">var</span> rules <span class="pl-k">=</span> {
+  age<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>integer|older_than:17<span class="pl-pds">'</span></span>,
+};</pre></div>
+
+<h3>
+<a id="配置" class="anchor" href="#%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">// Validator.setConfig if you are using native JavaScript code</span>
+validator.setConfig({...});</pre></div>
+
+<h3>
+<a id="可用配置" class="anchor" href="#%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>可用配置</h3>
+
+<h4>
+<a id="resumeonfailed" class="anchor" href="#resumeonfailed" aria-hidden="true"><span class="octicon octicon-link"></span></a>resumeOnFailed</h4>
+
+<p><strong>默认值</strong> false</p>
+
+<p>当某条验证失败时是否继续其他规则的验证。为true时继续验证。</p>
+
+<h2>
+<a id="可用的验证规则" class="anchor" href="#%E5%8F%AF%E7%94%A8%E7%9A%84%E9%AA%8C%E8%AF%81%E8%A7%84%E5%88%99" aria-hidden="true"><span class="octicon octicon-link"></span></a>可用的验证规则</h2>
+
+<h4>
+<a id="accepted" class="anchor" href="#accepted" aria-hidden="true"><span class="octicon octicon-link"></span></a>accepted</h4>
+
+<p>验证域必须为yes、on、1、或者true。 这个规则常用语验证“同意使用条款”表单。</p>
+
+<h4>
+<a id="afterdate" class="anchor" href="#afterdate" aria-hidden="true"><span class="octicon octicon-link"></span></a>after:date</h4>
+
+<p>验证的日期域的日期必须在指定日期之后。</p>
+
+<h4>
+<a id="alpha" class="anchor" href="#alpha" aria-hidden="true"><span class="octicon octicon-link"></span></a>alpha</h4>
+
+<p>验证域必须由纯英文字符组成。</p>
+
+<h4>
+<a id="alpha_dash" class="anchor" href="#alpha_dash" aria-hidden="true"><span class="octicon octicon-link"></span></a>alpha_dash</h4>
+
+<p>验证域必须由英文字符、数字、中划线或者下划线组成。</p>
+
+<h4>
+<a id="alpha_num" class="anchor" href="#alpha_num" aria-hidden="true"><span class="octicon octicon-link"></span></a>alpha_num</h4>
+
+<p>验证域必须由英文字符或者数字组成。</p>
+
+<h4>
+<a id="array" class="anchor" href="#array" aria-hidden="true"><span class="octicon octicon-link"></span></a>array</h4>
+
+<p>验证域必须为数组对象。</p>
+
+<h4>
+<a id="beforedate" class="anchor" href="#beforedate" aria-hidden="true"><span class="octicon octicon-link"></span></a>before:date</h4>
+
+<p>验证的日期域的日期必须在给定日期之前。</p>
+
+<h4>
+<a id="betweenminmax" class="anchor" href="#betweenminmax" aria-hidden="true"><span class="octicon octicon-link"></span></a>between:min,max</h4>
+
+<p>验证域的值必须在min和max之间，验证域可以是字符串、数字或者文件对象(FileList/File)。文件大小单位为KB。</p>
+
+<h4>
+<a id="boolean" class="anchor" href="#boolean" aria-hidden="true"><span class="octicon octicon-link"></span></a>boolean</h4>
+
+<p>验证域的值可以看作是布尔值，可以是true，false，1，0，"1"，"0"，'1' and '0'。</p>
+
+<h4>
+<a id="date" class="anchor" href="#date" aria-hidden="true"><span class="octicon octicon-link"></span></a>date</h4>
+
+<p>验证域必须为日期字符串形式，可以被Date.parse方法解析。</p>
+
+<h4>
+<a id="date_formatformat" class="anchor" href="#date_formatformat" aria-hidden="true"><span class="octicon octicon-link"></span></a>date_format:format</h4>
+
+<p>验证域必须符合制定的日期格式，允许的日期格式参照源代码中的dateFormat方法。</p>
+
+<h4>
+<a id="differentfield" class="anchor" href="#differentfield" aria-hidden="true"><span class="octicon octicon-link"></span></a>different:field</h4>
+
+<p>验证域的值必须域指定域的值不同。</p>
+
+<h4>
+<a id="digitsvalue" class="anchor" href="#digitsvalue" aria-hidden="true"><span class="octicon octicon-link"></span></a>digits:value</h4>
+
+<p>验证域必须为数字，且其位数为给定的位数。</p>
+
+<h4>
+<a id="digits_betweenminmax" class="anchor" href="#digits_betweenminmax" aria-hidden="true"><span class="octicon octicon-link"></span></a>digits_between:min,max</h4>
+
+<p>验证域必须为数字，且其位数在min和max之间。</p>
+
+<h4>
+<a id="email" class="anchor" href="#email" aria-hidden="true"><span class="octicon octicon-link"></span></a>email</h4>
+
+<p>验证域必须为电子邮件地址格式。</p>
+
+<h4>
+<a id="infoobar" class="anchor" href="#infoobar" aria-hidden="true"><span class="octicon octicon-link"></span></a>in:foo,bar,...</h4>
+
+<p>验证域的值必须在给定的允许值列表中。</p>
+
+<h4>
+<a id="integer" class="anchor" href="#integer" aria-hidden="true"><span class="octicon octicon-link"></span></a>integer</h4>
+
+<p>验证值必须为整数。</p>
+
+<h4>
+<a id="ip" class="anchor" href="#ip" aria-hidden="true"><span class="octicon octicon-link"></span></a>ip</h4>
+
+<p>验证值必须为IP地址形式（支持IPv4与IPv6）。</p>
+
+<h4>
+<a id="maxvalue" class="anchor" href="#maxvalue" aria-hidden="true"><span class="octicon octicon-link"></span></a>max:value</h4>
+
+<p>验证域的值必须小于等于max，验证域可以是字符串、数字或者文件对象(FileList/File)。文件大小单位为KB。</p>
+
+<h4>
+<a id="mimesfoobar" class="anchor" href="#mimesfoobar" aria-hidden="true"><span class="octicon octicon-link"></span></a>mimes:foo,bar,...</h4>
+
+<p>验证值的扩展名必须在给定的扩展名列表中。</p>
+
+<h4>
+<a id="minvalue" class="anchor" href="#minvalue" aria-hidden="true"><span class="octicon octicon-link"></span></a>min:value</h4>
+
+<p>验证域的值必须大于等于min，验证域可以是字符串、数字或者文件对象(FileList/File)。文件大小单位为KB。</p>
+
+<h4>
+<a id="not_infoobar" class="anchor" href="#not_infoobar" aria-hidden="true"><span class="octicon octicon-link"></span></a>not_in:foo,bar,...</h4>
+
+<p>验证域的值必须不在给定的值列表中。</p>
+
+<h4>
+<a id="numeric" class="anchor" href="#numeric" aria-hidden="true"><span class="octicon octicon-link"></span></a>numeric</h4>
+
+<p>验证域必须为数字。</p>
+
+<h4>
+<a id="regex" class="anchor" href="#regex" aria-hidden="true"><span class="octicon octicon-link"></span></a>regex</h4>
+
+<p>验证域必须符合指定的正则表达式（JavaScript风格）。</p>
+
+<h4>
+<a id="required" class="anchor" href="#required" aria-hidden="true"><span class="octicon octicon-link"></span></a>required</h4>
+
+<p>验证域必须存在。</p>
+
+<h4>
+<a id="required_iffieldvalue" class="anchor" href="#required_iffieldvalue" aria-hidden="true"><span class="octicon octicon-link"></span></a>required_if:field,value,...</h4>
+
+<p>如果给定的域的值等于给定的值，验证域必须存在。这里的条件可以是多个域和值，它们之间的关系为“与”。</p>
+
+<h4>
+<a id="required_withfoobar" class="anchor" href="#required_withfoobar" aria-hidden="true"><span class="octicon octicon-link"></span></a>required_with:foo,bar,...</h4>
+
+<p>如果给定的域之中任何一个存在的话，验证域必须存在。</p>
+
+<h4>
+<a id="required_with_allfoobar" class="anchor" href="#required_with_allfoobar" aria-hidden="true"><span class="octicon octicon-link"></span></a>required_with_all:foo,bar,...</h4>
+
+<p>仅当所有给定的域存在时，验证域必须存在。</p>
+
+<h4>
+<a id="required_withoutfoobar" class="anchor" href="#required_withoutfoobar" aria-hidden="true"><span class="octicon octicon-link"></span></a>required_without:foo,bar,...</h4>
+
+<p>如果给定的域之中任何一个不存在的话，验证域必须存在。</p>
+
+<h4>
+<a id="required_without_allfoobar" class="anchor" href="#required_without_allfoobar" aria-hidden="true"><span class="octicon octicon-link"></span></a>required_without_all:foo,bar,...</h4>
+
+<p>仅当所有给定的所有域都不存在时，验证域必须存在。</p>
+
+<h4>
+<a id="same" class="anchor" href="#same" aria-hidden="true"><span class="octicon octicon-link"></span></a>same</h4>
+
+<p>验证域的值必须域指定域的值相同。</p>
+
+<h4>
+<a id="sizevalue" class="anchor" href="#sizevalue" aria-hidden="true"><span class="octicon octicon-link"></span></a>size:value</h4>
+
+<p>验证域的大小必须等于指定大小。对于字符串来说，验证域的字符串长度必须等于给定长度。对于数字来说，验证域的值必须等于给定值。对于文件(FileList/File)来说，文件的大小必须等于给定值（单位为KB）。</p>
+
+<h4>
+<a id="string" class="anchor" href="#string" aria-hidden="true"><span class="octicon octicon-link"></span></a>string</h4>
+
+<p>验证域必须为字符串。</p>
+
+<h4>
+<a id="url" class="anchor" href="#url" aria-hidden="true"><span class="octicon octicon-link"></span></a>url</h4>
+
+<p>验证域必须为URL地址。当前不支持含有非英文（中文等）字符的地址。</p>
+
+<h2>
+<a id="测试文件入口" class="anchor" href="#%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6%E5%85%A5%E5%8F%A3" aria-hidden="true"><span class="octicon octicon-link"></span></a>测试文件入口</h2>
+
+<p><code>./test/index.html</code>     原生JavaScript支持测试</p>
+
+<p><code>./test/node.js</code>        Node.js支持测试</p>
+
+<p><code>./test/requirejs.html</code> RequireJS支持测试</p>
+
+<p><code>./test/seajs.html</code> Sea.js支持测试</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/ppoffice/validator.js">Validator.js</a> is maintained by <a href="https://github.com/ppoffice">ppoffice</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
