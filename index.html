@@ -56,7 +56,7 @@
     };
 
 <span class="pl-en">console</span><span class="pl-c1">.log</span>(Validator.validate(example, rules));
-<span class="pl-c">// failed =&gt; [{object: [Object], field: "comments", rule: "array"}]</span></pre></div>
+<span class="pl-c">// =&gt; {status: 'failed', [{object: [Object], field: "comments", rule: "array"}]}</span></pre></div>
 
 <h2>
 <a id="基本用法" class="anchor" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>基本用法</h2>
@@ -106,13 +106,28 @@
   comments<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>integer<span class="pl-pds">'</span></span>,
 };</pre></div>
 
+<p><strong>关于转义</strong></p>
+
+<p>当验证规则中必须出现'|', ':' 或者 ','时，请对在它们之前添加'\\'，如：</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-k">var</span> person <span class="pl-k">=</span> {
+      nickname<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Harry|Poter<span class="pl-pds">'</span></span>
+    },
+    rules <span class="pl-k">=</span> {
+      nickname<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>in:Harry<span class="pl-cce">\\</span>|Potter,Hermione<span class="pl-cce">\\</span>:Granger,Ron<span class="pl-cce">\\</span>,Weasley<span class="pl-pds">'</span></span>
+    }</pre></div>
+
 <h3>
 <a id="验证" class="anchor" href="#%E9%AA%8C%E8%AF%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h3>
 
 <div class="highlight highlight-javascript"><pre><span class="pl-c">// Validator.validate if you are using native JavaScript code</span>
 validator.validate(object_to_be_tested, rules);</pre></div>
 
-<p>如果待验证对象符合规则，validate函数返回true；否则返回带有验证状态、失败的属性和对应失败的规则信息的对象。</p>
+<p><strong>验证结果</strong></p>
+
+<p>返回一个包含status和rejects属性的对象。</p>
+
+<p>如果所有验证规则都满足，则status为'success'，rejects为空数组；否则status为'failed'，rejects为验证失败规则的详细信息。</p>
 
 <h3>
 <a id="添加验证器" class="anchor" href="#%E6%B7%BB%E5%8A%A0%E9%AA%8C%E8%AF%81%E5%99%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加验证器</h3>
