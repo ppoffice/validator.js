@@ -51,6 +51,25 @@
       return false;
     },
 
+    // Split string while taking predefined chars like '|', ':' and ',' into consideration
+    split: function (string, separator, escape) {
+      if(!string)
+        return [];
+      var list = string.split(escape),
+          result = [];
+      for (var i = 0; i < list.length; i++) {
+        var childList = list[i].split(separator);
+        for (var j = 0; j < childList.length; j++) {
+          if(i > 0 && j === 0) {
+            result[result.length - 1] += separator + childList[j];
+            continue;
+          }
+          result.push(childList[j]);
+        }
+      }
+      return result;
+    },
+
     typeof: function (value) {
       var type = Object.prototype.toString.call(value),
           arr = (type = type.split(' ')) && type.length > 1 ? type[1].substr(0, type[1].length - 1) : '';
@@ -63,7 +82,7 @@
     },
 
   };
-      
+
 
   Validator.prototype.requires = {
 
@@ -451,16 +470,19 @@
 
   // Parse rule string to object array.
   var parse = function (value) {
-    var fields = value.split('|'),
+    var fields = Utils.split(value, '|', '\\|'),
         res    = [];
 
     for (var i = 0; i < fields.length; i++) {
-      var field  = fields[i].split(':'),
-          key    = field[0],
+      var field = Utils.split(fields[i], ':', '\\:');
+      if(!field.length)
+        continue;
+
+      var key    = field[0],
           values = [];
 
       if(field.length === 2)
-        values = field[1].split(',');
+        values = Utils.split(field[1], ',', '\\,');
       key = Utils.trim(key);
       for (var j = 0; j < values.length; j++) {
         values[j] = Utils.trim(values[j]);
@@ -517,9 +539,22 @@
   }
 
   Validator.prototype.validate = function(object, rules) {
+    if(Utils.typeof(object) === 'string') {
+      try {
+        object = JSON.parse(object);
+      } catch (e) {
+        return {
+          status: 'failed',
+          rejects: [{object: 'Invalid JSON string!'}]
+        };
+      }
+    }
     rejects = [];
     validate.apply(this, [object, rules]);
-    return rejects;
+    return {
+      status: !rejects.length ? 'success' : 'failed',
+      rejects: rejects
+    };
   };
 
   if (typeof(require) !== 'undefined' &&

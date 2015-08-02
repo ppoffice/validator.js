@@ -29,7 +29,7 @@ var example = {
     };
 
 console.log(Validator.validate(example, rules));
-// failed => [{object: [Object], field: "comments", rule: "array"}]
+// => {status: 'failed', [{object: [Object], field: "comments", rule: "array"}]}
 ```
 
 ## Basic Usage
@@ -77,13 +77,28 @@ var rules = {
   comments: 'integer',
 };
 ```
+**About string escape**
+
+When '|', ':' or ',' has to be in your rule's values, please add '\\' in front of them, just like this:
+```javascript
+var person = {
+      nickname: 'Harry|Poter'
+    },
+    rules = {
+      nickname: 'in:Harry\\|Potter,Hermione\\:Granger,Ron\\,Weasley'
+    }
+```
 
 ### Validate the rules
 ```javascript
 // Validator.validate if you are using native JavaScript code
 validator.validate(object_to_be_tested, rules);
 ```
-If the validation succeeded, validate function will return 'true'. Otherwise it will return error message object containing validation status, the specified field and rule that made the validation failed.
+**Result**
+
+Return an object with 'status' and 'rejects' properties.
+
+If the validated object meets all the rules, the 'status' property will be 'success' and the 'rejects' array will be empty; otherwise 'status' will be 'failed' and 'rejects' will contain details that causes the failure.
 
 ### Add a validator
 You can use add() Function to add a validator, along with a name as its first argument and a validation method as second argument. Validation method can either be RegExp object or Function. When it's a Function, its first argument is the object to be tested, the second argument is the value of current validating field, and it should return `true` when the validation succeeded.

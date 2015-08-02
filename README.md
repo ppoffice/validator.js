@@ -26,7 +26,7 @@ var example = {
     };
 
 console.log(Validator.validate(example, rules));
-// failed => [{object: [Object], field: "comments", rule: "array"}]
+// => {status: 'failed', [{object: [Object], field: "comments", rule: "array"}]}
 ```
 
 ## 基本用法
@@ -74,13 +74,28 @@ var rules = {
   comments: 'integer',
 };
 ```
+**关于转义**
+
+当验证规则中必须出现'|', ':' 或者 ','时，请对在它们之前添加'\\'，如：
+```javascript
+var person = {
+      nickname: 'Harry|Poter'
+    },
+    rules = {
+      nickname: 'in:Harry\\|Potter,Hermione\\:Granger,Ron\\,Weasley'
+    }
+```
 
 ### 验证
 ```javascript
 // Validator.validate if you are using native JavaScript code
 validator.validate(object_to_be_tested, rules);
 ```
-如果待验证对象符合规则，validate函数返回true；否则返回带有验证状态、失败的属性和对应失败的规则信息的对象。
+**验证结果**
+
+返回一个包含status和rejects属性的对象。
+
+如果所有验证规则都满足，则status为'success'，rejects为空数组；否则status为'failed'，rejects为验证失败规则的详细信息。
 
 ### 添加验证器
 使用add方法为Validator添加验证器，第一个参数为验证器名称，第二个参数为验证方法，可以为正则表达式对象或者函数。当验证方法为函数时，其第一个参数为待验证的对象，第二个参数为当前验证域的值，后面的参数根据需求而定，验证成功时结果返回true。
