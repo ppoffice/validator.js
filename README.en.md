@@ -82,7 +82,7 @@ var rules = {
 ```
 **About string escape**
 
-When '|', ':' or ',' has to be in your rule's values, please add '\\' in front of them, just like this:
+When '|', ':' or ',' has to be in your rule's values, please add '\\\\' in front of them, just like this:
 ```javascript
 var person = {
       nickname: 'Harry|Poter'
