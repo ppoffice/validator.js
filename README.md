@@ -1,4 +1,7 @@
 # validator.js
+[![npm version](https://badge.fury.io/js/js-validator.svg)](http://badge.fury.io/js/js-validator)
+[![GitHub version](https://badge.fury.io/gh/ppoffice%2Fvalidator.js.svg)](http://badge.fury.io/gh/ppoffice%2Fvalidator.js)
+
 Laravel风格的**JavaScript对象/表单/JSON**验证库。| [English Version](README.en.md) | [Laravel Validation](http://laravel.com/docs/5.0/validation)
 * 支持不同验证规则组合
 * 支持复杂对象的递归验证
@@ -44,10 +47,10 @@ console.log(Validator.validate(example, rules));
 
 #### Node.js
 ```bash
-npm install ppoffice/validator.js --save
+npm install js-validator --save
 ```
 ```javascript
-var validator = require('validator.js');
+var validator = require('js-validator');
 ```
 
 #### RequireJS
