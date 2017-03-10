@@ -88,7 +88,7 @@
 
     // The field under validation must be present in the input data.
     'required': function (object, field) {
-      return !!object[field];
+      return typeof object[field] !== 'undefined';
     },
 
     // required_if:field1,value1,...

@@ -1,4 +1,6 @@
 # validator.js
+### I am very sorry to announce that I will no longer maintain this project, please refer to [other similar projects](https://www.npmjs.com/search?q=laravel%20validation&page=1&ranking=popularity)
+
 [![npm version](https://badge.fury.io/js/js-validator.svg)](http://badge.fury.io/js/js-validator)
 [![GitHub version](https://badge.fury.io/gh/ppoffice%2Fvalidator.js.svg)](http://badge.fury.io/gh/ppoffice%2Fvalidator.js)
 

@@ -1,4 +1,6 @@
 # validator.js
+### 非常抱歉，此库已停止维护，请参考[其他类似项目](https://www.npmjs.com/search?q=laravel%20validation&page=1&ranking=popularity)
+
 [![npm version](https://badge.fury.io/js/js-validator.svg)](http://badge.fury.io/js/js-validator)
 [![GitHub version](https://badge.fury.io/gh/ppoffice%2Fvalidator.js.svg)](http://badge.fury.io/gh/ppoffice%2Fvalidator.js)
 
